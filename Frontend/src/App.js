@@ -4,6 +4,7 @@ import "./App.css";
 
 import LoginPage from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import RegisterPage from "./pages/Register";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </BrowserRouter>
   );
