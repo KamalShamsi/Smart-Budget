@@ -1,14 +1,18 @@
-import React from 'react';
-import { Switch } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+
+import LoginPage from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
-    <Router>
-      <Switch>
-        <Route path="/login" component={LoginPage} />
-      </Switch>
-    </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

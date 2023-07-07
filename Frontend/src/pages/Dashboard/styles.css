@@ -1,0 +1,20 @@
+.dashboard-card-container {
+  padding: 1.5rem;
+}
+
+.dashboard-header {
+  display: flex;
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f2f2f2;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

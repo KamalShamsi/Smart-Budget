@@ -2,20 +2,24 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3000/login', {
-        email,
+      const response = await axios.post('http://localhost:8000/login', {
+        username,
         password,
       });
 
       // Handle successful login
-      console.log('Login successful:', response.data);
+      if (response.status === 200) {
+        console.log('Login successful:', response.data);
+      } else {
+        console.log('Login failed:', response.data.message);
+      }
     } catch (error) {
       // Handle login error
       console.error('Login failed:', error.response.data.error);
@@ -25,22 +29,22 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Email:</label>
+        <label>Username:</label>
         <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type='text'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </div>
       <div>
         <label>Password:</label>
         <input
-          type="password"
+          type='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button type="submit">Login</button>
+      <button type='submit'>Login</button>
     </form>
   );
 };
