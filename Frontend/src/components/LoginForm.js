@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Hook to access the navigation object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,6 +19,7 @@ const LoginForm = () => {
       // Handle successful login
       if (response.status === 200) {
         console.log('Login successful:', response.data);
+        navigate('/dashboard'); // Redirect to the dashboard page
       } else {
         console.log('Login failed:', response.data.message);
       }
