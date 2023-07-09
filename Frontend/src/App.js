@@ -5,6 +5,7 @@ import "./App.css";
 import LoginPage from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import RegisterPage from "./pages/Register";
+import AddPage from "./pages/Add";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/add" element={<AddPage/>} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
