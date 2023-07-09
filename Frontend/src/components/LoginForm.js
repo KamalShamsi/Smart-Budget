@@ -29,6 +29,10 @@ const LoginForm = () => {
     }
   };
 
+  const handleRegisterClick = () => {
+    navigate('/register'); // Redirect to the register page
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -48,6 +52,9 @@ const LoginForm = () => {
         />
       </div>
       <button type='submit'>Login</button>
+      <button type='button' onClick={handleRegisterClick}>
+        Register
+      </button>
     </form>
   );
 };
