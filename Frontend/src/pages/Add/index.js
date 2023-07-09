@@ -1,6 +1,7 @@
 import React from 'react';
 import AddIncomeForm from '../../components/AddIncomeForm';
 import AddExpenseForm from '../../components/AddExpenseForm';
+import BottomBar from '../../components/BottomBar';
 
 export default function Add() {
   const handleAddIncome = (incomeData) => {
@@ -19,6 +20,7 @@ export default function Add() {
       <AddIncomeForm onAddIncome={handleAddIncome} />
       <h3>Add Expense</h3>
       <AddExpenseForm onAddExpense={handleAddExpense} />
+      <BottomBar />
     </div>
   );
 }

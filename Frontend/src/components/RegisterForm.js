@@ -21,7 +21,7 @@ const RegisterForm = () => {
       });
 
       // Handle successful registration
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log("Registration successful:", response.data);
         navigate("/login"); // Redirect to the login page
       } else {
