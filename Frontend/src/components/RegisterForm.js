@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [confrimPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate(); // Hook to access the navigation object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,15 +21,16 @@ const LoginForm = () => {
         lastName,
       });
 
-      // Handle successful login
+      // Handle successful registration
       if (response.status === 200) {
-        console.log("Login successful:", response.data);
+        console.log("Registration successful:", response.data);
+        navigate("/login"); // Redirect to the login page
       } else {
-        console.log("Login failed:", response.data.message);
+        console.log("Registration failed:", response.data.message);
       }
     } catch (error) {
-      // Handle login error
-      console.error("Login failed:", error.response.data.error);
+      // Handle registration error
+      console.error("Registration failed:", error.response.data.error);
     }
   };
 
@@ -69,7 +72,7 @@ const LoginForm = () => {
         <label>Confirm Password:</label>
         <input
           type="password"
-          value={confrimPassword}
+          value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
@@ -78,4 +81,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
