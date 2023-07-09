@@ -23,5 +23,3 @@ exports.updateProfile = async (req, res) => {
     return res.status(500).json({ error: "An error occurred while updating the profile" });
   }
 };
-
-// Other user controller functions...
