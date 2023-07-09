@@ -44,7 +44,7 @@ app.post("/register", (req, res) => {
   // Save the user in the user list
   users.push(newUser);
 
-  return res.status(201).json({ message: "Registration successful" });
+  return res.status(200).json({ message: "Registration successful" });
 });
 
 // Login endpoint

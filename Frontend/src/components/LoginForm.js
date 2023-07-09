@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Hook to access the navigation object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,6 +19,7 @@ const LoginForm = () => {
       // Handle successful login
       if (response.status === 200) {
         console.log('Login successful:', response.data);
+        navigate('/dashboard'); // Redirect to the dashboard page
       } else {
         console.log('Login failed:', response.data.message);
       }
@@ -24,6 +27,10 @@ const LoginForm = () => {
       // Handle login error
       console.error('Login failed:', error.response.data.error);
     }
+  };
+
+  const handleRegisterClick = () => {
+    navigate('/register'); // Redirect to the register page
   };
 
   return (
@@ -45,6 +52,9 @@ const LoginForm = () => {
         />
       </div>
       <button type='submit'>Login</button>
+      <button type='button' onClick={handleRegisterClick}>
+        Register
+      </button>
     </form>
   );
 };
