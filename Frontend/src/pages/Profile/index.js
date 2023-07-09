@@ -1,7 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import BottomBar from '../../components/BottomBar';
 
 export default function Profile() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/login'); // Redirect to the login page after logout
+  };
+
   return (
     <div>
       <h3>Profile</h3>
@@ -21,6 +28,7 @@ export default function Profile() {
           <input type="text" value="ExampleLastName" readOnly />
         </label>
       </form>
+      <button onClick={handleLogout}>Logout</button> {/* Add the logout button */}
       <BottomBar />
     </div>
   );
