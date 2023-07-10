@@ -34,9 +34,7 @@ const RegisterForm = () => {
     }
   };
 
-  const handleRegisterClick = () => {
-    navigate('/login'); // Redirect to the login page
-  };
+  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -80,7 +78,7 @@ const RegisterForm = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
-      <button type="submit" onClick={handleRegisterClick}>Register</button>
+      <button type="submit" >Register</button>
     </form>
   );
 };
