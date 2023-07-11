@@ -29,6 +29,7 @@ const AddIncomeForm = ({ onAddIncome, totalIncomes }) => {
     <form onSubmit={handleFormSubmit}>
       <label>
         Income Name:
+        
         <input type="text" value={incomeName} onChange={handleIncomeNameChange} />
       </label>
       <br />
