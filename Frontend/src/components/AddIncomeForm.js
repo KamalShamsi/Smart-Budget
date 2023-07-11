@@ -1,33 +1,47 @@
 import React, { useState } from 'react';
 
-export default function AddIncomeForm({ onAddIncome }) {
-  const [name, setName] = useState('');
-  const [value, setValue] = useState('');
+const AddIncomeForm = ({ onAddIncome, totalIncomes }) => {
+  const [incomeName, setIncomeName] = useState('');
+  const [incomeValue, setIncomeValue] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleIncomeNameChange = (e) => {
+    setIncomeName(e.target.value);
+  };
+
+  const handleIncomeValueChange = (e) => {
+    setIncomeValue(e.target.value);
+  };
+
+  const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (name && value) {
-      onAddIncome({ name, value });
-      setName('');
-      setValue('');
-    }
+
+    const newIncome = {
+      name: incomeName,
+      value: incomeValue,
+    };
+
+    onAddIncome(newIncome);
+    setIncomeName('');
+    setIncomeValue('');
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Value"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
+    <form onSubmit={handleFormSubmit}>
+      <label>
+        Income Name:
+        <input type="text" value={incomeName} onChange={handleIncomeNameChange} />
+      </label>
+      <br />
+      <label>
+        Income Value:
+        <input type="text" value={incomeValue} onChange={handleIncomeValueChange} />
+      </label>
+      <br />
+      <br />
       <button type="submit">Add Income</button>
+      <p>Total Incomes: {totalIncomes}</p>
     </form>
   );
-}
+};
+
+export default AddIncomeForm;
