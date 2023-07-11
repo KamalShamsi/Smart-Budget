@@ -1,33 +1,46 @@
 import React, { useState } from 'react';
 
-export default function AddExpenseForm({ onAddExpense }) {
-  const [name, setName] = useState('');
-  const [value, setValue] = useState('');
+const AddExpenseForm = ({ onAddExpense, totalExpenses }) => {
+  const [expenseName, setExpenseName] = useState('');
+  const [expenseValue, setExpenseValue] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleExpenseNameChange = (e) => {
+    setExpenseName(e.target.value);
+  };
+
+  const handleExpenseValueChange = (e) => {
+    setExpenseValue(e.target.value);
+  };
+
+  const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (name && value) {
-      onAddExpense({ name, value });
-      setName('');
-      setValue('');
-    }
+
+    const newExpense = {
+      name: expenseName,
+      value: expenseValue,
+    };
+
+    onAddExpense(newExpense);
+    setExpenseName('');
+    setExpenseValue('');
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Value"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
+    <form onSubmit={handleFormSubmit}>
+      <label>
+        Expense Name:
+        <input type="text" value={expenseName} onChange={handleExpenseNameChange} />
+      </label>
+      <br />
+      <label>
+        Expense Value:
+        <input type="text" value={expenseValue} onChange={handleExpenseValueChange} />
+      </label>
+      <br />
       <button type="submit">Add Expense</button>
+      <p>Total Expenses: {totalExpenses}</p>
     </form>
   );
-}
+};
+
+export default AddExpenseForm;
