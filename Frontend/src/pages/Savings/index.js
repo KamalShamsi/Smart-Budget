@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
-import AddSavingGoal from '../../components/AddSavingGoal'
+import AddSavingGoalForm from '../../components/AddSavingGoalForm'
 import BottomBar from '../../components/BottomBar';
 import Card from '../../components/Card';
 
 export default function Savings() {
   const [savingGoal, setSavingGoal] = useState([]);
 
-  const handleAddExpense = (expenseData) => {
-    setExpenses([...expenses, expenseData]);
-    console.log('Expense added:', expenseData);
+  const handleAddSavingGoal = (savingData) => {
+    setSavingGoal([savingGoal, savingData])
   };
 
-  const handleAddSavingGoal = (savingData) => {
-    setSavingGoal([...savingData, savingData]);
-  };
+  savingGoal.forEach(function(entry) {
+    console.log(entry);
+  });
 
   return (
     <div>
+
+        <Card color='white' width='40%'>
+          <h3>Add Saving Goal</h3>
+          <AddSavingGoalForm onAddSaving={handleAddSavingGoal} />
+        </Card>
+
       <div className="bottomBar">
         <BottomBar />
       </div>
