@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Client } = require("pg");
+const jwt = require("jsonwebtoken");
 
 const client = new Client({
   user: "smartbudget",
@@ -58,12 +59,14 @@ app.post("/register", async (req, res) => {
     }
 
     // Insert a new user profile into the database
-    await client.query(
-      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5)",
+    const newUser = await client.query(
+      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING username",
       [username, password, firstName, lastName, email]
     );
 
-    return res.status(200).json({ message: "Registration successful" });
+    return res
+      .status(200)
+      .json({ message: "Registration successful", username: newUser.rows[0].username });
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).json({ error: "Registration failed" });
@@ -85,10 +88,51 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    return res.status(200).json({ message: "Login successful" });
+    // Generate a token
+    const token = jwt.sign({ username }, "secretKey");
+
+    return res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Login failed" });
+  }
+});
+
+// Verify token middleware
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ error: "Token not provided" });
+  }
+
+  jwt.verify(token, "secretKey", (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: "Invalid token" });
+    }
+
+    req.username = decoded.username;
+    next();
+  });
+};
+
+// Protected endpoint
+app.get("/profile", verifyToken, async (req, res) => {
+  try {
+    const { username } = req;
+    const profile = await client.query(
+      "SELECT username, first_name, last_name, email FROM profiles WHERE username = $1",
+      [username]
+    );
+
+    if (profile.rows.length === 0) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    return res.status(200).json({ profile: profile.rows[0] });
+  } catch (error) {
+    console.error("Profile fetch error:", error);
+    return res.status(500).json({ error: "Error fetching profile" });
   }
 });
 
