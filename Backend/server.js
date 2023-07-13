@@ -1,7 +1,15 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { Client } = require("pg");
+
+const client = new Client({
+  user: "smartbudget",
+  host: "localhost",
+  database: "smart_budget",
+  password: "smartbudget",
+  port: 5432, // Default PostgreSQL port
+});
 
 // Create an instance of Express
 const app = express();
@@ -10,28 +18,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// User data (for simplicity, keeping it in-memory)
-let users = [];
-
-// MongoDB Configuration
-const dbURI = "mongodb://localhost:27017/";
-mongoose
-  .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error);
-  });
-
-// Create a user model
-const User = mongoose.model("User", {
-  username: String,
-  password: String,
-  firstName: String,
-  lastName: String,
-});
-
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the Smart Budget API");
@@ -39,25 +25,25 @@ app.get("/", (req, res) => {
 
 // Register endpoint
 app.post("/register", async (req, res) => {
-  const { username, password, firstName, lastName } = req.body;
+  const { username, password, firstName, lastName, email } = req.body;
 
   try {
-    // Check if the username is already taken
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
+    // Check if the username or email is already taken
+    const existingUser = await client.query(
+      "SELECT * FROM profiles WHERE username = $1 OR email = $2",
+      [username, email]
+    );
+    if (existingUser.rows.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "Username or email already exists" });
     }
 
-    // Create a new user object
-    const newUser = new User({
-      username,
-      password,
-      firstName,
-      lastName,
-    });
-
-    // Save the user in the database
-    await newUser.save();
+    // Insert a new user profile into the database
+    await client.query(
+      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5)",
+      [username, password, firstName, lastName, email]
+    );
 
     return res.status(200).json({ message: "Registration successful" });
   } catch (error) {
@@ -72,9 +58,12 @@ app.post("/login", async (req, res) => {
 
   try {
     // Find the user with the provided username and password
-    const user = await User.findOne({ username, password });
+    const user = await client.query(
+      "SELECT * FROM profiles WHERE username = $1 AND password = $2",
+      [username, password]
+    );
 
-    if (!user) {
+    if (user.rows.length === 0) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
@@ -87,6 +76,14 @@ app.post("/login", async (req, res) => {
 
 // Start the server
 const port = process.env.PORT || 8000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+
+client
+  .connect()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection error:", error);
+  });
