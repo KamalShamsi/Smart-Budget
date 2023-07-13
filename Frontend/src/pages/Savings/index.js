@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import AddSavingGoalForm from '../../components/AddSavingGoalForm'
 import BottomBar from '../../components/BottomBar';
 import Card from '../../components/Card';
+import TableDelete from '../../components/tableDelete';
 
 export default function Savings() {
   const [savingGoal, setSavingGoal] = useState([]);
@@ -21,6 +22,8 @@ export default function Savings() {
           <h3>Add Saving Goal</h3>
           <AddSavingGoalForm onAddSaving={handleAddSavingGoal} />
         </Card>
+
+        
 
       <div className="bottomBar">
         <BottomBar />
