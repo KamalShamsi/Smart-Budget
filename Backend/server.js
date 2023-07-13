@@ -23,6 +23,24 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Smart Budget API");
 });
 
+// Create profiles table
+const createProfilesTable = async () => {
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS profiles (
+        username VARCHAR(50) UNIQUE,
+        password VARCHAR(50),
+        first_name VARCHAR(50),
+        last_name VARCHAR(50),
+        email VARCHAR(100) UNIQUE
+      )
+    `);
+    console.log("Profiles table created");
+  } catch (error) {
+    console.error("Error creating profiles table:", error);
+  }
+};
+
 // Register endpoint
 app.post("/register", async (req, res) => {
   const { username, password, firstName, lastName, email } = req.body;
@@ -80,6 +98,7 @@ const port = process.env.PORT || 8000;
 client
   .connect()
   .then(() => {
+    createProfilesTable();
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
