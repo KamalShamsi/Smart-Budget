@@ -33,8 +33,6 @@ const RegisterForm = () => {
     }
   };
 
-  
-
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -77,7 +75,7 @@ const RegisterForm = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
-      <button type="submit" >Register</button>
+      <button type="submit">Register</button>
     </form>
   );
 };
