@@ -23,7 +23,7 @@ export default function Savings() {
           <AddSavingGoalForm onAddSaving={handleAddSavingGoal} />
         </Card>
 
-        
+        <TableDelete elements={savingGoal}></TableDelete>
 
       <div className="bottomBar">
         <BottomBar />
