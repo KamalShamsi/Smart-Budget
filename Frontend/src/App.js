@@ -9,6 +9,7 @@ import RegisterPage from "./pages/Register";
 import AddPage from "./pages/Add";
 import ProfilePage from "./pages/Profile";
 import SavingsPage from "./pages/Savings";
+import StatsPage from "./pages/Stats";
 
 const theme = createTheme(); // Create a theme instance
 
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/add" element={<AddPage />} />
           <Route path="/savings" element={<SavingsPage />} />
+          <Route path="/stats" element={<StatsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/" element={<LoginPage />} />
         </Routes>

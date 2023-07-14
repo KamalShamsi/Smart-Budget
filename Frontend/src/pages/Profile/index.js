@@ -8,6 +8,7 @@ import {
   ExitToApp as ExitToAppIcon,
   GetApp as GetAppIcon,
   Person as PersonIcon,
+  Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 
 const Profile = () => {
@@ -26,8 +27,8 @@ const Profile = () => {
           borderRadius={5}
         />
       </Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
+      <Grid container spacing={3} justifyContent="center">
+        <Grid item xs={6} sm={3} md={2}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Link href="/dashboard" color="inherit" underline="none">
               <Box
@@ -50,7 +51,7 @@ const Profile = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={3} md={2}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Link href="/add" color="inherit" underline="none">
               <Box
@@ -73,7 +74,7 @@ const Profile = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={3} md={2}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Link href="/profile" color="inherit" underline="none">
               <Box
@@ -96,7 +97,7 @@ const Profile = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={3} md={2}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Link href="/savings" color="inherit" underline="none">
               <Box
@@ -114,6 +115,29 @@ const Profile = () => {
                 <MonetizationOnIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
                   Savings
+                </Typography>
+              </Box>
+            </Link>
+          </Paper>
+        </Grid>
+        <Grid item xs={6} sm={3} md={2}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Link href="/stats" color="inherit" underline="none">
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                transition="background-color 0.3s ease-in-out"
+                sx={{
+                  bgcolor: '#9c27b0',
+                  '&:hover': {
+                    bgcolor: '#7b1fa2',
+                  },
+                }}
+              >
+                <AssessmentIcon fontSize="large" color="white" />
+                <Typography variant="body1" color="white" mt={1}>
+                  Stats
                 </Typography>
               </Box>
             </Link>
