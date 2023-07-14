@@ -1,7 +1,6 @@
 import React from "react";
 import LoginForm from "../../components/LoginForm";
 import Card from "../../components/Card";
-import './styles.css';
 
 const LoginPage = () => {
   return (
