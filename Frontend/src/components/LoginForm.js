@@ -1,28 +1,29 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, TextField, Typography } from '@material-ui/core';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { Button, TextField, Typography } from "@material-ui/core";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f5f5f5',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    backgroundColor: "#f5f5f5",
   },
   formContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     padding: theme.spacing(4),
     borderRadius: theme.spacing(2),
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    width: '400px',
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+    width: "400px",
   },
   title: {
     marginBottom: theme.spacing(4),
-    color: '#333333',
-    textAlign: 'center',
+    color: "#333333",
+    textAlign: "center",
   },
   textField: {
     marginBottom: theme.spacing(2),
@@ -34,38 +35,43 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   signUpLink: {
-    textDecoration: 'none',
+    textDecoration: "none",
     color: theme.palette.primary.main,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 }));
 
 const LoginForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       // Make an API call to the backend for authentication
-      const response = await axios.post('http://localhost:8000/login', {
+      const response = await axios.post("http://localhost:8000/login", {
         username,
         password,
       });
 
       // Handle successful login
       if (response.status === 200) {
-        console.log('Login successful:', response.data);
-        navigate('/dashboard'); // Redirect to the dashboard page
+        console.log("Login successful:", response.data);
+        const { userId, token } = response.data; // Extract the user ID and token from the response
+
+        // Store the user ID and token in the browser cookies
+        Cookies.set("user_id", userId);
+
+        navigate("/dashboard"); // Redirect to the dashboard page
       } else {
-        console.log('Login failed:', response.data.message);
+        console.log("Login failed:", response.data.message);
       }
     } catch (error) {
       // Handle login error
-      console.error('Login failed:', error.response.data.error);
+      console.error("Login failed:", error.response.data.error);
     }
   };
 
@@ -103,8 +109,12 @@ const LoginForm = () => {
             Login
           </Button>
         </form>
-        <Typography variant="body1" align="center" className={classes.signUpText}>
-          Don't have an account?{' '}
+        <Typography
+          variant="body1"
+          align="center"
+          className={classes.signUpText}
+        >
+          Don't have an account?{" "}
           <Link to="/register" className={classes.signUpLink}>
             Sign up
           </Link>

@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Client } = require("pg");
 const jwt = require("jsonwebtoken");
+const router = require("./routes/userRoutes");
 
 const client = new Client({
   user: "smartbudget",
@@ -18,6 +19,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+app.use("/", router);
 
 // Routes
 app.get("/", (req, res) => {
@@ -39,6 +41,45 @@ const createProfilesTable = async () => {
     console.log("Profiles table created");
   } catch (error) {
     console.error("Error creating profiles table:", error);
+  }
+};
+
+// Create income table
+const createIncomesTable = async () => {
+  try {
+    await client.query(`
+        CREATE TABLE IF NOT EXISTS incomes (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(50),
+        category VARCHAR(50),
+        amount DECIMAL(10, 2) NOT NULL,
+        date_added DATE NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES profiles(id)
+    );
+    `);
+    console.log("Incomes table created");
+  } catch (error) {
+    console.error("Error creating incomes table:", error);
+  }
+};
+
+// Create expense table
+const createExpensesTable = async () => {
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS expenses (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(50),
+      category VARCHAR(50),
+      amount DECIMAL(10, 2) NOT NULL,
+      date_added DATE NOT NULL,
+      user_id INT,
+      FOREIGN KEY (user_id) REFERENCES profiles(id)
+    );
+    `);
+    console.log("Expenses table created");
+  } catch (error) {
+    console.error("Error creating expenses table:", error);
   }
 };
 
@@ -64,9 +105,10 @@ app.post("/register", async (req, res) => {
       [username, password, firstName, lastName, email]
     );
 
-    return res
-      .status(200)
-      .json({ message: "Registration successful", username: newUser.rows[0].username });
+    return res.status(200).json({
+      message: "Registration successful",
+      username: newUser.rows[0].username,
+    });
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).json({ error: "Registration failed" });
@@ -88,10 +130,12 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
+    const userId = user.rows[0].id;
+
     // Generate a token
     const token = jwt.sign({ username }, "secretKey");
 
-    return res.status(200).json({ message: "Login successful", token });
+    return res.status(200).json({ message: "Login successful", token, userId });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Login failed" });
@@ -142,9 +186,14 @@ const port = process.env.PORT || 8000;
 client
   .connect()
   .then(() => {
-    createProfilesTable();
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+    createProfilesTable().then(() => {
+      createIncomesTable().then(() => {
+        createExpensesTable().then(() => {
+          app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+          });
+        });
+      });
     });
   })
   .catch((error) => {

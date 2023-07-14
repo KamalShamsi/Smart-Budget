@@ -1,14 +1,57 @@
-import React from 'react';
-import { Box, Typography, Grid, Paper, Link } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Box, Typography, Grid, Paper, Link } from "@mui/material";
 import {
   Home as HomeIcon,
   AddCircle as AddCircleIcon,
   AccountCircle as AccountCircleIcon,
   MonetizationOn as MonetizationOnIcon,
   Assessment as AssessmentIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
+import Cookies from "js-cookie";
 
 const Dashboard = () => {
+  const [balance, setBalance] = useState(0);
+
+  const getBalance = async () => {
+    try {
+      const userId = Cookies.get("user_id");
+
+      const incomeRes = await axios.get(
+        `http://localhost:8000/incomes/${userId}`
+      );
+
+      const expenseRes = await axios.get(
+        `http://localhost:8000/expenses/${userId}`
+      );
+
+      let incomes = incomeRes.data;
+      let expenses = expenseRes.data;
+
+      // Calculate the total income
+      let totalIncome = incomes.reduce(
+        (sum, income) => sum + parseFloat(income.amount),
+        0
+      );
+
+      // Calculate the total expenses
+      let totalExpense = expenses.reduce(
+        (sum, expense) => sum + parseFloat(expense.amount),
+        0
+      );
+
+      // Calculate the balance
+      let balance = totalIncome - totalExpense;
+      setBalance(balance);
+    } catch (error) {
+      console.error("Failed to retrieve balance:", error);
+    }
+  };
+
+  useEffect(() => {
+    getBalance();
+  }, []);
+
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
       <Box textAlign="center" mb={3}>
@@ -34,9 +77,9 @@ const Dashboard = () => {
                 alignItems="center"
                 transition="background-color 0.3s ease-in-out"
                 sx={{
-                  bgcolor: '#1976d2',
-                  '&:hover': {
-                    bgcolor: '#1565c0',
+                  bgcolor: "#1976d2",
+                  "&:hover": {
+                    bgcolor: "#1565c0",
                   },
                 }}
               >
@@ -57,9 +100,9 @@ const Dashboard = () => {
                 alignItems="center"
                 transition="background-color 0.3s ease-in-out"
                 sx={{
-                  bgcolor: '#0d47a1',
-                  '&:hover': {
-                    bgcolor: '#0a3b8d',
+                  bgcolor: "#0d47a1",
+                  "&:hover": {
+                    bgcolor: "#0a3b8d",
                   },
                 }}
               >
@@ -80,9 +123,9 @@ const Dashboard = () => {
                 alignItems="center"
                 transition="background-color 0.3s ease-in-out"
                 sx={{
-                  bgcolor: '#1b5e20',
-                  '&:hover': {
-                    bgcolor: '#145214',
+                  bgcolor: "#1b5e20",
+                  "&:hover": {
+                    bgcolor: "#145214",
                   },
                 }}
               >
@@ -103,9 +146,9 @@ const Dashboard = () => {
                 alignItems="center"
                 transition="background-color 0.3s ease-in-out"
                 sx={{
-                  bgcolor: '#ff6f00',
-                  '&:hover': {
-                    bgcolor: '#e65100',
+                  bgcolor: "#ff6f00",
+                  "&:hover": {
+                    bgcolor: "#e65100",
                   },
                 }}
               >
@@ -126,9 +169,9 @@ const Dashboard = () => {
                 alignItems="center"
                 transition="background-color 0.3s ease-in-out"
                 sx={{
-                  bgcolor: '#9c27b0',
-                  '&:hover': {
-                    bgcolor: '#7b1fa2',
+                  bgcolor: "#9c27b0",
+                  "&:hover": {
+                    bgcolor: "#7b1fa2",
                   },
                 }}
               >
@@ -147,7 +190,7 @@ const Dashboard = () => {
                 Balance
               </Typography>
               <Typography variant="h5" color="#132c4a" mt={1}>
-                $3,500
+                ${balance}
               </Typography>
               <Typography variant="body2" color="#132c4a" mt={1}>
                 Available Balance
