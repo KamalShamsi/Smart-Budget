@@ -42,6 +42,52 @@ const createProfilesTable = async () => {
   }
 };
 
+// create saving goals table
+const createSavingTable = async () => {
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS savings (
+        goal VARCHAR(50),
+        total INTEGER,
+        payment INTEGER
+      )
+    `);
+    console.log("saving table created");
+  } catch (error) {
+    console.error("Error creating saving table:", error);
+  }
+};
+
+// savings endpoint
+app.post("/savings", async (req, res) => {
+  const { goal, total, payment } = req.body;
+  try {
+    const newSavingGoal = await client.query(
+      "INSERT INTO savings (goal, total, payment) VALUES ($1, $2, $3)",
+      [goal, total, payment]
+    )
+    return res
+      .status(200)
+      .json({ message: "saving successful"});
+  } catch (error) {
+    console.error("saving input fail", error);
+    return res.status(500).json({ error: "saving input fail" });
+  }
+  
+});
+
+app.get("/savings", async (req, res) => {
+  try {
+    const saving = await query.client(
+      "SELECT goal, total, payment FROM savings"
+    );
+    return res.status(200).json({ message:"saving fetch successful" });
+  } catch (error) {
+    console.error("Saving goal fetch error", error);
+    return res.status(500).json({ error: "Error fetching savings" });
+  };
+});
+
 // Register endpoint
 app.post("/register", async (req, res) => {
   const { username, password, firstName, lastName, email } = req.body;
@@ -136,6 +182,8 @@ app.get("/profile", verifyToken, async (req, res) => {
   }
 });
 
+
+
 // Start the server
 const port = process.env.PORT || 8000;
 
@@ -143,6 +191,7 @@ client
   .connect()
   .then(() => {
     createProfilesTable();
+    createSavingTable();
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });

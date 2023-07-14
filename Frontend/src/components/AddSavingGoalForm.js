@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import axios from "axios";
 
-const AddSavingGoalForm = ({ onAddSaving }) => {
+const AddSavingGoalForm = () => {
   const [savingName, setSavingName] = useState('');
   const [savingTotal, setSavingTotal] = useState('');
   const [savingPayment, setSavingPayment] = useState('');
@@ -17,19 +18,24 @@ const AddSavingGoalForm = ({ onAddSaving }) => {
     setSavingPayment(e.target.value);
   }
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const newSaving = {
-        name:savingName,
-        total:savingTotal,
-        payment:savingPayment,
-    };
+    try {
+      const response = await axios.post("http://localhost:8000/savings", {
+        savingName,
+        savingTotal,
+        savingPayment,
+      });
 
-    onAddSaving(newSaving)
-    setSavingName('');
-    setSavingTotal('');
-    setSavingPayment('');
+      if (response.status === 200) {
+        console.log("save goal succeed:", response.data);
+      } else {
+        console.log("save goal failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("save goal failed:", error.response.data.error);
+    }
   };
 
   return (

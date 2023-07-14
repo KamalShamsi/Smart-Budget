@@ -1,32 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AddSavingGoalForm from '../../components/AddSavingGoalForm'
 import BottomBar from '../../components/BottomBar';
 import Card from '../../components/Card';
 import {Table, TableBody, TableCell, TableHead, TableContainer, TableRow, Paper} from "@material-ui/core"
 import { Button } from '@mui/material';
+import axios from "axios";
+
 
 export default function Savings() {
   const [savingGoal, setSavingGoal] = useState([]);
 
-  const handleAddSavingGoal = (savingData) => {
-    setSavingGoal([...savingGoal, savingData])
-  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/savings")
+      .then((res) => {
+        setSavingGoal(res)
+        console.log("Result:", setSavingGoal);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-  const handleDelete = (pIndex) => {
-    setSavingGoal((savingGoal) =>
-      savingGoal.filter((_, index) => index !== pIndex)
-    );
-  };
+  }, []);
+  
 
+  
   return (
     <div>
-
         <Card color='white' width='40%'>
           <h3>Add Saving Goal</h3>
-          <AddSavingGoalForm onAddSaving={handleAddSavingGoal} />
+          <AddSavingGoalForm/>
         </Card>
-
-        
         <TableContainer component={Paper}>
             <Table>
 
@@ -45,21 +49,16 @@ export default function Savings() {
                             <TableCell align="left">{element.name}</TableCell>
                             <TableCell align="right">{element.total}</TableCell>
                             <TableCell align="right">{element.payment}</TableCell>
-                            <TableCell align="right" width="100">
-                              <Button onClick={() => handleDelete(pIndex)}>
-                              delete
-                              </Button>
-                            </TableCell>
+                            
                         </TableRow>
                     ))}
                 </TableBody>
 
             </Table>
         </TableContainer>
-        
-      <div className="bottomBar">
-        <BottomBar />
-      </div>
+        <div className="bottomBar">
+          <BottomBar />
+        </div>
     </div>
   );
 }
