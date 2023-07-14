@@ -26,6 +26,7 @@ const LoginForm = () => {
     } catch (error) {
       // Handle login error
       console.error('Login failed:', error.response.data.error);
+      alert("Invalid username or password");
     }
   };
 
