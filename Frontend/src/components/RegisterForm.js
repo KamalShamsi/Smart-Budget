@@ -42,11 +42,11 @@ const RegisterForm = () => {
     e.preventDefault();
 
     if (
-      username.trim() === '' ||
-      password.trim() === '' ||
-      firstName.trim() === '' ||
-      lastName.trim() === '' ||
-      confirmPassword.trim() === ''
+      username.trim() == '' ||
+      password.trim() == '' ||
+      firstName.trim() == '' ||
+      lastName.trim() == '' ||
+      confirmPassword.trim() == ''
     ) {
       alert('Please fill in all fields.');
       return;
