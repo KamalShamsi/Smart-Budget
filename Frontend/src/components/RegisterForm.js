@@ -30,6 +30,7 @@ const RegisterForm = () => {
     } catch (error) {
       // Handle registration error
       console.error("Registration failed:", error.response.data.error);
+      alert("Username or email already exists");
     }
   };
 
