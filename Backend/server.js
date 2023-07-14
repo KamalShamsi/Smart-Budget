@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Client } = require("pg");
 const jwt = require("jsonwebtoken");
+const router = require("./routes/userRoutes");
 
 const client = new Client({
   user: "smartbudget",
@@ -18,6 +19,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+app.use("/", router);
 
 // Routes
 app.get("/", (req, res) => {
@@ -42,7 +44,7 @@ const createProfilesTable = async () => {
   }
 };
 
-// create saving goals table
+// Create saving goals table
 const createSavingTable = async () => {
   try {
     await client.query(`
@@ -52,9 +54,9 @@ const createSavingTable = async () => {
         payment INTEGER
       )
     `);
-    console.log("saving table created");
+    console.log("Saving goals table created");
   } catch (error) {
-    console.error("Error creating saving table:", error);
+    console.error("Error creating saving goals table:", error);
   }
 };
 
@@ -62,30 +64,25 @@ const createSavingTable = async () => {
 app.post("/savings", async (req, res) => {
   const { goal, total, payment } = req.body;
   try {
-    const newSavingGoal = await client.query(
+    await client.query(
       "INSERT INTO savings (goal, total, payment) VALUES ($1, $2, $3)",
       [goal, total, payment]
-    )
-    return res
-      .status(200)
-      .json({ message: "saving successful"});
+    );
+    return res.status(200).json({ message: "Saving goal created" });
   } catch (error) {
-    console.error("saving input fail", error);
-    return res.status(500).json({ error: "saving input fail" });
+    console.error("Saving goal creation failed:", error);
+    return res.status(500).json({ error: "Saving goal creation failed" });
   }
-  
 });
 
 app.get("/savings", async (req, res) => {
   try {
-    const saving = await query.client(
-      "SELECT goal, total, payment FROM savings"
-    );
-    return res.status(200).json({ message:"saving fetch successful" });
+    const savings = await client.query("SELECT goal, total, payment FROM savings");
+    return res.status(200).json({ savings: savings.rows });
   } catch (error) {
-    console.error("Saving goal fetch error", error);
+    console.error("Error fetching savings:", error);
     return res.status(500).json({ error: "Error fetching savings" });
-  };
+  }
 });
 
 // Register endpoint
@@ -105,14 +102,15 @@ app.post("/register", async (req, res) => {
     }
 
     // Insert a new user profile into the database
-    const newUser = await client.query(
-      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING username",
+    await client.query(
+      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5)",
       [username, password, firstName, lastName, email]
     );
 
-    return res
-      .status(200)
-      .json({ message: "Registration successful", username: newUser.rows[0].username });
+    return res.status(200).json({
+      message: "Registration successful",
+      username,
+    });
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).json({ error: "Registration failed" });
@@ -134,10 +132,12 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
+    const userId = user.rows[0].id;
+
     // Generate a token
     const token = jwt.sign({ username }, "secretKey");
 
-    return res.status(200).json({ message: "Login successful", token });
+    return res.status(200).json({ message: "Login successful", token, userId });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Login failed" });
@@ -181,8 +181,6 @@ app.get("/profile", verifyToken, async (req, res) => {
     return res.status(500).json({ error: "Error fetching profile" });
   }
 });
-
-
 
 // Start the server
 const port = process.env.PORT || 8000;
