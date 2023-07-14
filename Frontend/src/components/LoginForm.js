@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     marginBottom: theme.spacing(2),
   },
+  signUpText: {
+    marginTop: theme.spacing(2),
+  },
   button: {
     marginTop: theme.spacing(2),
   },
@@ -100,7 +103,7 @@ const LoginForm = () => {
             Login
           </Button>
         </form>
-        <Typography variant="body1" align="center">
+        <Typography variant="body1" align="center" className={classes.signUpText}>
           Don't have an account?{' '}
           <Link to="/register" className={classes.signUpLink}>
             Sign up
