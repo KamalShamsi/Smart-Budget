@@ -72,6 +72,7 @@ const LoginForm = () => {
     } catch (error) {
       // Handle login error
       console.error("Login failed:", error.response.data.error);
+      alert(error.response.data.error);
     }
   };
 

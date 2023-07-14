@@ -44,44 +44,46 @@ const createProfilesTable = async () => {
   }
 };
 
-// Create income table
-const createIncomesTable = async () => {
+// Create saving goals table
+const createSavingTable = async () => {
   try {
     await client.query(`
-        CREATE TABLE IF NOT EXISTS incomes (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(50),
-        category VARCHAR(50),
-        amount DECIMAL(10, 2) NOT NULL,
-        date_added DATE NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES profiles(id)
-    );
+      CREATE TABLE IF NOT EXISTS savings (
+        goal VARCHAR(50),
+        total INTEGER,
+        payment INTEGER
+      )
     `);
-    console.log("Incomes table created");
+    console.log("Saving goals table created");
   } catch (error) {
-    console.error("Error creating incomes table:", error);
+    console.error("Error creating saving goals table:", error);
   }
 };
 
-// Create expense table
-const createExpensesTable = async () => {
+// savings endpoint
+app.post("/savings", async (req, res) => {
+  const { goal, total, payment } = req.body;
   try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS expenses (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(50),
-      category VARCHAR(50),
-      amount DECIMAL(10, 2) NOT NULL,
-      date_added DATE NOT NULL,
-      user_id INT,
-      FOREIGN KEY (user_id) REFERENCES profiles(id)
+    await client.query(
+      "INSERT INTO savings (goal, total, payment) VALUES ($1, $2, $3)",
+      [goal, total, payment]
     );
-    `);
-    console.log("Expenses table created");
+    return res.status(200).json({ message: "Saving goal created" });
   } catch (error) {
-    console.error("Error creating expenses table:", error);
+    console.error("Saving goal creation failed:", error);
+    return res.status(500).json({ error: "Saving goal creation failed" });
   }
-};
+});
+
+app.get("/savings", async (req, res) => {
+  try {
+    const savings = await client.query("SELECT goal, total, payment FROM savings");
+    return res.status(200).json({ savings: savings.rows });
+  } catch (error) {
+    console.error("Error fetching savings:", error);
+    return res.status(500).json({ error: "Error fetching savings" });
+  }
+});
 
 // Register endpoint
 app.post("/register", async (req, res) => {
@@ -100,14 +102,14 @@ app.post("/register", async (req, res) => {
     }
 
     // Insert a new user profile into the database
-    const newUser = await client.query(
-      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING username",
+    await client.query(
+      "INSERT INTO profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5)",
       [username, password, firstName, lastName, email]
     );
 
     return res.status(200).json({
       message: "Registration successful",
-      username: newUser.rows[0].username,
+      username,
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -186,14 +188,10 @@ const port = process.env.PORT || 8000;
 client
   .connect()
   .then(() => {
-    createProfilesTable().then(() => {
-      createIncomesTable().then(() => {
-        createExpensesTable().then(() => {
-          app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-          });
-        });
-      });
+    createProfilesTable();
+    createSavingTable();
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
   })
   .catch((error) => {
