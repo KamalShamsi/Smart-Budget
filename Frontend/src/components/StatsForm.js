@@ -265,6 +265,8 @@ const StatsForm = () => {
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
+              {/* Additional components or information */}
+              {/* Example: */}
               <Typography variant="h6" color="#132c4a">
                 Additional Component
               </Typography>
@@ -278,6 +280,8 @@ const StatsForm = () => {
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
+              {/* Additional components or information */}
+              {/* Example: */}
               <Typography variant="h6" color="#132c4a">
                 Additional Component
               </Typography>
@@ -293,3 +297,4 @@ const StatsForm = () => {
 };
 
 export default StatsForm;
+

@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
-import { Box, Typography, Grid, Paper, Link, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, IconButton, Button } from '@mui/material';
-import { Home as HomeIcon, AddCircle as AddCircleIcon, AccountCircle as AccountCircleIcon, MonetizationOn as MonetizationOnIcon, Delete as DeleteIcon, Assessment as AssessmentIcon } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Link,
+  Table,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  IconButton,
+  Button,
+} from '@mui/material';
+import {
+  Home as HomeIcon,
+  AddCircle as AddCircleIcon,
+  AccountCircle as AccountCircleIcon,
+  MonetizationOn as MonetizationOnIcon,
+  Delete as DeleteIcon,
+  Assessment as AssessmentIcon,
+} from '@mui/icons-material';
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
@@ -11,8 +32,8 @@ const Savings = () => {
   const handleAddSavingGoal = () => {
     const newGoal = {
       name: goalName,
-      totalAmount: totalAmount,
-      monthlyAmount: monthlyAmount,
+      totalAmount: parseFloat(totalAmount),
+      monthlyAmount: parseFloat(monthlyAmount),
     };
     setSavingGoals([...savingGoals, newGoal]);
     setGoalName('');
@@ -22,6 +43,13 @@ const Savings = () => {
 
   const handleDeleteSavingGoal = (index) => {
     setSavingGoals(savingGoals.filter((_, i) => i !== index));
+  };
+
+  const calculateMonthsToGoal = (totalAmount, monthlyAmount) => {
+    if (monthlyAmount <= 0) {
+      return 'Infinity';
+    }
+    return Math.ceil(totalAmount / monthlyAmount);
   };
 
   return (
@@ -190,6 +218,7 @@ const Savings = () => {
                       <TableCell>Goal Name</TableCell>
                       <TableCell>Total Amount</TableCell>
                       <TableCell>Monthly Amount</TableCell>
+                      <TableCell>Months to Reach Goal</TableCell>
                       <TableCell>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -197,8 +226,9 @@ const Savings = () => {
                     {savingGoals.map((goal, index) => (
                       <TableRow key={index}>
                         <TableCell>{goal.name}</TableCell>
-                        <TableCell>{goal.totalAmount}</TableCell>
-                        <TableCell>{goal.monthlyAmount}</TableCell>
+                        <TableCell>${goal.totalAmount}</TableCell>
+                        <TableCell>${goal.monthlyAmount}</TableCell>
+                        <TableCell>{calculateMonthsToGoal(goal.totalAmount, goal.monthlyAmount)}</TableCell>
                         <TableCell>
                           <IconButton color="secondary" onClick={() => handleDeleteSavingGoal(index)}>
                             <DeleteIcon />
