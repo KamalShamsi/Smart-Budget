@@ -3,6 +3,8 @@ import AddIncomeForm from '../../components/AddIncomeForm';
 import AddExpenseForm from '../../components/AddExpenseForm';
 import BottomBar from '../../components/BottomBar';
 import Card from '../../components/Card';
+import {Table, TableBody, TableCell, TableHead, TableContainer, TableRow, Paper} from "@material-ui/core"
+import { Button } from '@mui/material';
 
 export default function Add() {
   const [incomes, setIncomes] = useState([]);
@@ -16,6 +18,18 @@ export default function Add() {
   const handleAddExpense = (expenseData) => {
     setExpenses([...expenses, expenseData]);
     console.log('Expense added:', expenseData);
+  };
+
+  const handleDeleteExpense = (pIndex) => {
+    setExpenses(() =>
+      expenses.filter((_, index) => index !== pIndex)
+    );
+  };
+
+  const handleDeleteIncome = (pIndex) => {
+    setIncomes(() =>
+      incomes.filter((_, index) => index !== pIndex)
+    );
   };
 
   const totalIncomes = incomes.reduce((total, income) => total + parseFloat(income.value), 0);
@@ -44,23 +58,48 @@ export default function Add() {
           <AddExpenseForm onAddExpense={handleAddExpense} totalExpenses={totalExpenses} />
         </Card>
       </div>
+      
+      <TableContainer component={Paper}>
+          <Table>
 
-      <div 
-        style={{
-          display: 'flex',
-          flexDirection: 'rows',
-          justifyContent: 'space-around',
-          marginTop: '10px',
-        }}
-      >
-        <Card color='white' width='40%'>
-          <h3>Add Saving Goal</h3>
-        </Card>
-        <Card color='white' width='40%'>
-          <h3>Change Budget</h3>
-        </Card>
+              <TableHead>
+                  <TableRow>
+                      <TableCell>Type</TableCell>
+                      <TableCell align='right'>Name</TableCell>
+                      <TableCell align="right">Amount</TableCell>
+                      <TableCell></TableCell>
+                  </TableRow>
+              </TableHead>
 
-      </div>
+              <TableBody>
+                  {incomes.map((element, pIndex) => (
+                      <TableRow>
+                          <TableCell align='left'>income</TableCell>
+                          <TableCell align="right">{element.name}</TableCell>
+                          <TableCell align="right">{element.value}</TableCell>
+                          <TableCell align="right" width="100">
+                            <Button onClick={() => handleDeleteIncome(pIndex)}>
+                            delete
+                            </Button>
+                          </TableCell>
+                      </TableRow>
+                  ))}
+                  {expenses.map((element, pIndex) => (
+                      <TableRow>
+                          <TableCell align='left'>expense</TableCell>
+                          <TableCell align="right">{element.name}</TableCell>
+                          <TableCell align="right">{element.value}</TableCell>
+                          <TableCell align="right" width="100">
+                            <Button onClick={() => handleDeleteExpense(pIndex)}>
+                            delete
+                            </Button>
+                          </TableCell>
+                      </TableRow>
+                  ))}
+              </TableBody>
+
+          </Table>
+      </TableContainer>
 
       <div className="bottomBar">
         <BottomBar />

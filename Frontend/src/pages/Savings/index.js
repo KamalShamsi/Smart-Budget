@@ -13,7 +13,7 @@ export default function Savings() {
   };
 
   const handleDelete = (pIndex) => {
-    setSavingGoal((savingGoal) =>
+    setSavingGoal(() =>
       savingGoal.filter((_, index) => index !== pIndex)
     );
   };
