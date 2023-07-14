@@ -34,25 +34,27 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Username:</label>
+    <form onSubmit={handleSubmit} className="login_form">
+      <div className="form_field">
+        <label className="form_label">Username:</label>
         <input
           type='text'
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="form_input"
         />
       </div>
-      <div>
-        <label>Password:</label>
+      <div className="form_field">
+        <label className="form_label">Password:</label>
         <input
           type='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="form_input"
         />
       </div>
-      <button type='submit'>Login</button>
-      <button type='button' onClick={handleRegisterClick}>
+      <button type='submit' className="login_button">Login</button>
+      <button type='button' onClick={handleRegisterClick} className="register_button">
         Register
       </button>
     </form>

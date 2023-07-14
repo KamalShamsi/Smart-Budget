@@ -1,34 +1,192 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import BalanceCard from '../../components/BalanceCard';
-import MonthlyBudgetCard from '../../components/MonthlyBudgetCard';
-import SanvingGoalCard from '../../components/SavingGoalCard';
-import './styles.css';
-import CashCard from '../../components/CashCard';
-import BottomBar from '../../components/BottomBar';
+import { Box, Typography, Grid, Paper, Link } from '@mui/material';
+import {
+  Home as HomeIcon,
+  AddCircle as AddCircleIcon,
+  AccountCircle as AccountCircleIcon,
+  MonetizationOn as MonetizationOnIcon,
+} from '@mui/icons-material';
 
-export default function Dashboard({ balance, month, goal, income, expenses }) {
-  const navigate = useNavigate();
-
-  const handleAddButtonClick = () => {
-    navigate('/add');
-  };
-
+const Dashboard = () => {
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard-header">
-        <h3 style={{ margin: 0 }}>Dashboard</h3>
-      </div>
-      <hr />
-      <div className="dashboard-card-container">
-        <BalanceCard balance="3500" />
-        <MonthlyBudgetCard balance="3500" month="January" />
-        <SanvingGoalCard goal="15000" balance="9800" />
-        <CashCard income="4530" expenses="2500" />
-      </div>
-      <div className="bottomBar">
-        <BottomBar onAddButtonClick={handleAddButtonClick} />
-      </div>
-    </div>
+    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
+      <Box textAlign="center" mb={3}>
+        <Typography variant="h4" color="white">
+          Dashboard
+        </Typography>
+        <Box
+          bgcolor="#1565c0"
+          height={2}
+          width={150}
+          mx="auto"
+          my={2}
+          borderRadius={5}
+        />
+      </Box>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Link href="/dashboard" color="inherit" underline="none">
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                transition="background-color 0.3s ease-in-out"
+                sx={{
+                  bgcolor: '#1976d2',
+                  '&:hover': {
+                    bgcolor: '#1565c0',
+                  },
+                }}
+              >
+                <HomeIcon fontSize="large" color="white" />
+                <Typography variant="body1" color="white" mt={1}>
+                  Home
+                </Typography>
+              </Box>
+            </Link>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Link href="/add" color="inherit" underline="none">
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                transition="background-color 0.3s ease-in-out"
+                sx={{
+                  bgcolor: '#0d47a1',
+                  '&:hover': {
+                    bgcolor: '#0a3b8d',
+                  },
+                }}
+              >
+                <AddCircleIcon fontSize="large" color="white" />
+                <Typography variant="body1" color="white" mt={1}>
+                  Add
+                </Typography>
+              </Box>
+            </Link>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Link href="/profile" color="inherit" underline="none">
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                transition="background-color 0.3s ease-in-out"
+                sx={{
+                  bgcolor: '#1b5e20',
+                  '&:hover': {
+                    bgcolor: '#145214',
+                  },
+                }}
+              >
+                <AccountCircleIcon fontSize="large" color="white" />
+                <Typography variant="body1" color="white" mt={1}>
+                  Profile
+                </Typography>
+              </Box>
+            </Link>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Link href="/savings" color="inherit" underline="none">
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                transition="background-color 0.3s ease-in-out"
+                sx={{
+                  bgcolor: '#ff6f00',
+                  '&:hover': {
+                    bgcolor: '#e65100',
+                  },
+                }}
+              >
+                <MonetizationOnIcon fontSize="large" color="white" />
+                <Typography variant="body1" color="white" mt={1}>
+                  Savings
+                </Typography>
+              </Box>
+            </Link>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Balance
+              </Typography>
+              <Typography variant="h5" color="#132c4a" mt={1}>
+                $3,500
+              </Typography>
+              <Typography variant="body2" color="#132c4a" mt={1}>
+                Available Balance
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Monthly Budget
+              </Typography>
+              <Typography variant="h5" color="#132c4a" mt={1}>
+                $3,500
+              </Typography>
+              <Typography variant="body2" color="#132c4a" mt={1}>
+                January Budget
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Savings Goal
+              </Typography>
+              <Typography variant="h5" color="#132c4a" mt={1}>
+                $9,800
+              </Typography>
+              <Typography variant="body2" color="#132c4a" mt={1}>
+                Progress towards $15,000 goal
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Cash Flow
+              </Typography>
+              <Typography variant="h5" color="#132c4a" mt={1}>
+                $2,030
+              </Typography>
+              <Typography variant="body2" color="#132c4a" mt={1}>
+                $4,530 income - $2,500 expenses
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" color="#132c4a" mb={2}>
+              Recent Transactions
+            </Typography>
+            {/* Place your recent transactions component here */}
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
   );
-}
+};
+
+export default Dashboard;
