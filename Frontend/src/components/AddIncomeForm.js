@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AddIncomeForm = ({ onAddIncome, totalIncomes }) => {
+const AddIncomeForm = ({ onAddIncome }) => {
   const [incomeName, setIncomeName] = useState('');
   const [incomeValue, setIncomeValue] = useState('');
 
@@ -39,7 +39,6 @@ const AddIncomeForm = ({ onAddIncome, totalIncomes }) => {
       <br />
       <br />
       <button type="submit">Add Income</button>
-      <p>Total Incomes: {totalIncomes}</p>
     </form>
   );
 };

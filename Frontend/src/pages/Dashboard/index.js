@@ -6,12 +6,25 @@ import {
   AddCircle as AddCircleIcon,
   AccountCircle as AccountCircleIcon,
   MonetizationOn as MonetizationOnIcon,
-  Assessment as AssessmentIcon,
 } from "@mui/icons-material";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import Cookies from "js-cookie";
 
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
+  const [income, setIncome] = useState(0);
+  const [expenses, setExpenses] = useState(0);
 
   const getBalance = async () => {
     try {
@@ -43,6 +56,8 @@ const Dashboard = () => {
       // Calculate the balance
       let balance = totalIncome - totalExpense;
       setBalance(balance);
+      setIncome(totalIncome);
+      setExpenses(totalExpense);
     } catch (error) {
       console.error("Failed to retrieve balance:", error);
     }
@@ -51,6 +66,26 @@ const Dashboard = () => {
   useEffect(() => {
     getBalance();
   }, []);
+
+  // Sample data for demonstration
+  const monthlyStatsData = [
+    { month: "Jan", income: 5000, expenses: 3500 },
+    { month: "Feb", income: 5500, expenses: 4000 },
+    { month: "Mar", income: 6000, expenses: 3800 },
+    { month: "Apr", income: 6500, expenses: 4200 },
+    { month: "May", income: 7000, expenses: 3900 },
+    { month: "Jun", income: 7500, expenses: 4300 },
+  ];
+
+  const pieChartData = [
+    { category: "Food", amount: 250 },
+    { category: "Transportation", amount: 180 },
+    { category: "Entertainment", amount: 300 },
+    { category: "Utilities", amount: 200 },
+    { category: "Shopping", amount: 150 },
+  ];
+
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ffc658", "#ffc658"];
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -108,7 +143,7 @@ const Dashboard = () => {
               >
                 <AddCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Add
+                  Money Management
                 </Typography>
               </Box>
             </Link>
@@ -160,30 +195,7 @@ const Dashboard = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/stats" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: "#9c27b0",
-                  "&:hover": {
-                    bgcolor: "#7b1fa2",
-                  },
-                }}
-              >
-                <AssessmentIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Stats
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
@@ -198,7 +210,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
@@ -213,7 +225,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
@@ -228,7 +240,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
@@ -243,12 +255,103 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={8} sm={6} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography variant="h6" color="#132c4a" mb={2}>
-              Recent Transactions
-            </Typography>
-            {/* Place your recent transactions component here */}
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Monthly Income & Expenses
+              </Typography>
+              <LineChart width={650} height={300} data={monthlyStatsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend verticalAlign="top" height={36} />
+                <Line
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#8884d8"
+                  name="Income"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expenses"
+                  stroke="#82ca9d"
+                  name="Expenses"
+                />
+              </LineChart>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={8} sm={6} md={5}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Expense Categories Breakdown
+              </Typography>
+              <Box display="flex" justifyContent="center">
+                <PieChart width={250} height={300}>
+                  <Pie
+                    data={pieChartData}
+                    dataKey="amount"
+                    nameKey="category"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                  >
+                    {pieChartData.map((entry, index) => (
+                      <Cell
+                        key={index}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+                <Box textAlign="left" ml={4}>
+                  {pieChartData.map((entry, index) => (
+                    <Typography
+                      key={index}
+                      variant="body2"
+                      color="#132c4a"
+                    >
+                      {entry.category}: ${entry.amount}
+                    </Typography>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={8} sm={5} md={5}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Monthly Income
+              </Typography>
+              <Typography variant="h5" color="#132c4a" mt={1}>
+                ${income}
+              </Typography>
+              <Typography variant="body2" color="#132c4a" mt={1}>
+                Total Income for the Month
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={8} sm={5} md={5}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Box textAlign="center">
+              <Typography variant="h6" color="#132c4a">
+                Monthly Expenses
+              </Typography>
+              <Typography variant="h5" color="#132c4a" mt={1}>
+                ${expenses}
+              </Typography>
+              <Typography variant="body2" color="#132c4a" mt={1}>
+                Total Expenses for the Month
+              </Typography>
+            </Box>
           </Paper>
         </Grid>
       </Grid>

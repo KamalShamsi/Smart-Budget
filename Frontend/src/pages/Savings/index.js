@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -24,27 +24,29 @@ import {
 } from '@mui/icons-material';
 import axios from "axios";
 
+
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
   const [goalName, setGoalName] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [monthlyAmount, setMonthlyAmount] = useState('');
 
+  const handleDeleteSavingGoal = async (index) => {
+    try {
+      const response = await axios.delete('http://localhost:8000/savings', {data: {
+        goal:savingGoals[index].goalname,
+        total:savingGoals[index].totalamount,
+        monthly:savingGoals[index].monthlyamount
+      }});
+      if (response.status === 200) {
+        console.log("delete success:", response.data);
+      } else {
+        console.log("delete failed:", response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
 
-  const handleAddSavingGoal = () => {
-    const newGoal = {
-      name: goalName,
-      totalAmount: parseFloat(totalAmount),
-      monthlyAmount: parseFloat(monthlyAmount),
-    };
-    setSavingGoals([...savingGoals, newGoal]);
-    setGoalName('');
-    setTotalAmount('');
-    setMonthlyAmount('');
-  };
-
-  const handleDeleteSavingGoal = (index) => {
-    setSavingGoals(savingGoals.filter((_, i) => i !== index));
   };
 
   const calculateMonthsToGoal = (totalAmount, monthlyAmount) => {
@@ -54,29 +56,39 @@ const Savings = () => {
     return Math.ceil(totalAmount / monthlyAmount);
   };
 
+  //send data to backend
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/savings", {
-        goalName,
-        totalAmount,
-        monthlyAmount
-      });
+      
+      const response = await axios.post("http://localhost:8000/savings", {goalName:goalName, totalAmount:totalAmount, monthlyAmount:monthlyAmount});
 
       if (response.status === 200) {
         console.log("save goal succeed:", response.data);
       } else {
         console.log("save goal failed:", response.data.message);
       }
+      setGoalName('');
+      setTotalAmount('');
+      setMonthlyAmount('');
+
     } catch (error) {
       console.error("save goal failed:", error.response.data.error);
     }
+
   };
   
-  const getSavingGoals = () => {
-    
-  }
-
+  //get goals from db and setgoals
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/savings")
+      .then((res) => {
+        setSavingGoals(res.data.saving.rows);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -134,7 +146,7 @@ const Savings = () => {
               >
                 <AddCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Add
+                Money Management
                 </Typography>
               </Box>
             </Link>
@@ -186,30 +198,7 @@ const Savings = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/stats" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#6a1b9a',
-                  '&:hover': {
-                    bgcolor: '#4a148c',
-                  },
-                }}
-              >
-                <AssessmentIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Stats
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={10}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box mb={2}>
               <form onSubmit={handleFormSubmit}>
@@ -229,7 +218,7 @@ const Savings = () => {
                     <Typography variant="body1">Monthly Amount:</Typography>
                     <input type="text" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} />
                   </Box>
-                  <Button type="submit" variant="contained" color="primary" onClick={handleAddSavingGoal}>
+                  <Button type="submit" variant="contained" color="primary">
                     Add Goal
                   </Button>
                 </Box>
@@ -254,10 +243,10 @@ const Savings = () => {
                   <TableBody>
                     {savingGoals.map((goal, index) => (
                       <TableRow key={index}>
-                        <TableCell>{goal.name}</TableCell>
-                        <TableCell>${goal.totalAmount}</TableCell>
-                        <TableCell>${goal.monthlyAmount}</TableCell>
-                        <TableCell>{calculateMonthsToGoal(goal.totalAmount, goal.monthlyAmount)}</TableCell>
+                        <TableCell>{goal.goalname}</TableCell>
+                        <TableCell>${goal.totalamount}</TableCell>
+                        <TableCell>${goal.monthlyamount}</TableCell>
+                        <TableCell>{calculateMonthsToGoal(goal.totalamount, goal.monthlyamount)}</TableCell>
                         <TableCell>
                           <IconButton color="secondary" onClick={() => handleDeleteSavingGoal(index)}>
                             <DeleteIcon />
@@ -274,6 +263,7 @@ const Savings = () => {
         </Grid>
       </Grid>
     </Box>
+    
   );
 };
 

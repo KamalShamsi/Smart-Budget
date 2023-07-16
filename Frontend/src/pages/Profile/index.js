@@ -68,7 +68,7 @@ const Profile = () => {
               >
                 <AddCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Add
+                Money Management
                 </Typography>
               </Box>
             </Link>
@@ -120,31 +120,8 @@ const Profile = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/stats" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#9c27b0',
-                  '&:hover': {
-                    bgcolor: '#7b1fa2',
-                  },
-                }}
-              >
-                <AssessmentIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Stats
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
         {/* Profile-specific components */}
-        <Grid item xs={12} md={4}>
+        <Grid item xs={10}>
           <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
             <Box
               display="flex"
@@ -169,7 +146,7 @@ const Profile = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={10}>
           <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
             <Box
               display="flex"
@@ -194,8 +171,8 @@ const Profile = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+        <Grid item xs={10}>
+          <Paper elevation={4} sx={{ p: 1 }}>
             <Box textAlign="center">
               <Button
                 variant="contained"
