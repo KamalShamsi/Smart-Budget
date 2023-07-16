@@ -41,6 +41,17 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      username.trim() == '' ||
+      password.trim() == '' ||
+      firstName.trim() == '' ||
+      lastName.trim() == '' ||
+      confirmPassword.trim() == ''
+    ) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:8000/register', {
         username,
@@ -59,6 +70,7 @@ const RegisterForm = () => {
     } catch (error) {
       // Handle registration error
       console.error('Registration failed:', error.response.data.error);
+      alert(error.response.data.error);
     }
   };
 

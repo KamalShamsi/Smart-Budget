@@ -22,12 +22,14 @@ import {
   Delete as DeleteIcon,
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
+import axios from "axios";
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
   const [goalName, setGoalName] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [monthlyAmount, setMonthlyAmount] = useState('');
+
 
   const handleAddSavingGoal = () => {
     const newGoal = {
@@ -51,6 +53,30 @@ const Savings = () => {
     }
     return Math.ceil(totalAmount / monthlyAmount);
   };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:8000/savings", {
+        goalName,
+        totalAmount,
+        monthlyAmount
+      });
+
+      if (response.status === 200) {
+        console.log("save goal succeed:", response.data);
+      } else {
+        console.log("save goal failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("save goal failed:", error.response.data.error);
+    }
+  };
+  
+  const getSavingGoals = () => {
+    
+  }
+
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -186,31 +212,34 @@ const Savings = () => {
         <Grid item xs={12}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box mb={2}>
-              <Typography variant="h6" color="primary">
-                Add Saving Goal
-              </Typography>
-              <Box display="flex" mt={2}>
-                <Box mr={2}>
-                  <Typography variant="body1">Goal Name:</Typography>
-                  <input type="text" value={goalName} onChange={(e) => setGoalName(e.target.value)} />
+              <form onSubmit={handleFormSubmit}>
+                <Typography variant="h6" color="primary">
+                  Add Saving Goal
+                </Typography>
+                <Box display="flex" mt={2}>
+                  <Box mr={2}>
+                    <Typography variant="body1">Goal Name:</Typography>
+                    <input type="text" value={goalName} onChange={(e) => setGoalName(e.target.value)} />
+                  </Box>
+                  <Box mr={2}>
+                    <Typography variant="body1">Total Amount:</Typography>
+                    <input type="text" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} />
+                  </Box>
+                  <Box mr={2}>
+                    <Typography variant="body1">Monthly Amount:</Typography>
+                    <input type="text" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} />
+                  </Box>
+                  <Button type="submit" variant="contained" color="primary" onClick={handleAddSavingGoal}>
+                    Add Goal
+                  </Button>
                 </Box>
-                <Box mr={2}>
-                  <Typography variant="body1">Total Amount:</Typography>
-                  <input type="text" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} />
-                </Box>
-                <Box mr={2}>
-                  <Typography variant="body1">Monthly Amount:</Typography>
-                  <input type="text" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} />
-                </Box>
-                <Button variant="contained" color="primary" onClick={handleAddSavingGoal}>
-                  Add Goal
-                </Button>
-              </Box>
+              </form>
             </Box>
             <Box>
               <Typography variant="h6" color="primary">
                 Saving Goals
               </Typography>
+
               <TableContainer component={Paper} mt={2}>
                 <Table>
                   <TableHead>
@@ -239,6 +268,7 @@ const Savings = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+              
             </Box>
           </Paper>
         </Grid>
