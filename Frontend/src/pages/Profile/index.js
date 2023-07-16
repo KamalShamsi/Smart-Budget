@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState }  from 'react';
 import { Box, Typography, Grid, Paper, Button, Link } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -10,8 +10,33 @@ import {
   Person as PersonIcon,
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
+import Cookies from "js-cookie";
+import axios from "axios";
 
 const Profile = () => {
+
+  const [userProfile, setUserProfile] = useState("");
+
+  const getUserProfile = async () => {
+    try {
+      const token = Cookies.get("tok");
+      const response = await axios.get("http://localhost:8000/profile", {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (response.status === 200) {
+        setUserProfile(response.data.profile);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
       <Box textAlign="center" mb={3}>
@@ -120,31 +145,8 @@ const Profile = () => {
             </Link>
           </Paper>
         </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/stats" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#9c27b0',
-                  '&:hover': {
-                    bgcolor: '#7b1fa2',
-                  },
-                }}
-              >
-                <AssessmentIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Stats
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
         {/* Profile-specific components */}
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={10}>
           <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
             <Box
               display="flex"
@@ -161,7 +163,7 @@ const Profile = () => {
               >
                 <PersonIcon fontSize="large" />
                 <Typography variant="h6" ml={1} color="black">
-                  Username: JohnDoe
+                  Username: {userProfile.username}
                 </Typography>
               </Box>
               {/* Add icon or profile picture here */}
@@ -169,7 +171,7 @@ const Profile = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={10}>
           <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
             <Box
               display="flex"
@@ -182,19 +184,16 @@ const Profile = () => {
                   User Information
                 </Typography>
                 <Typography variant="body1" mb={1} color="black">
-                  First Name: John
+                  First Name: {userProfile.first_name}
                 </Typography>
                 <Typography variant="body1" mb={1} color="black">
-                  Last Name: Doe
-                </Typography>
-                <Typography variant="body1" mb={1} color="black">
-                  Email: johndoe@example.com
+                  Last Name: {userProfile.last_name}
                 </Typography>
               </Box>
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={10}> 
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Button
