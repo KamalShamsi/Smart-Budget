@@ -31,6 +31,7 @@ const createProfilesTable = async () => {
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS profiles (
+        id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE,
         password VARCHAR(50),
         first_name VARCHAR(50),
@@ -54,6 +55,7 @@ const createIncomesTable = async () => {
         category VARCHAR(50),
         amount DECIMAL(10, 2) NOT NULL,
         date_added DATE NOT NULL,
+        user_id INT,
         FOREIGN KEY (user_id) REFERENCES profiles(id)
     );
     `);
