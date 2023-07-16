@@ -580,7 +580,7 @@ const AddTransaction = () => {
         </Modal>
 
         <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={5}>
             <Paper elevation={3} sx={{ p: 2, bgcolor: '#f9f9f9' }}>
               <Typography variant="h6" color="primary" align="center">
                 Total Income
@@ -590,7 +590,7 @@ const AddTransaction = () => {
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={5}>
             <Paper elevation={3} sx={{ p: 2, bgcolor: '#f9f9f9' }}>
               <Typography variant="h6" color="secondary" align="center">
                 Total Expenses
