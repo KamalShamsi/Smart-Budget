@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Typography,
   Grid,
   Paper,
-  Link,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  IconButton,
   Table,
+  TableBody,
+  TableCell,
   TableContainer,
   TableHead,
-  TableBody,
   TableRow,
-  TableCell,
-  IconButton,
-  Button,
+  LinearProgress,
 } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -20,75 +26,86 @@ import {
   AccountCircle as AccountCircleIcon,
   MonetizationOn as MonetizationOnIcon,
   Delete as DeleteIcon,
-  Assessment as AssessmentIcon,
+  Edit as EditIcon,
 } from '@mui/icons-material';
-import axios from "axios";
-
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
   const [goalName, setGoalName] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [monthlyAmount, setMonthlyAmount] = useState('');
+  const [selectedGoalIndex, setSelectedGoalIndex] = useState(null);
 
-  const handleDeleteSavingGoal = async (index) => {
-    try {
-      const response = await axios.delete('http://localhost:8000/savings', {data: {
-        goal:savingGoals[index].goalname,
-        total:savingGoals[index].totalamount,
-        monthly:savingGoals[index].monthlyamount
-      }});
-      if (response.status === 200) {
-        console.log("delete success:", response.data);
-      } else {
-        console.log("delete failed:", response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
+  const handleOpenModal = () => {
+    setOpenModal(true);
   };
 
-  const calculateMonthsToGoal = (totalAmount, monthlyAmount) => {
-    if (monthlyAmount <= 0) {
-      return 'Infinity';
-    }
-    return Math.ceil(totalAmount / monthlyAmount);
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    resetForm();
+    setSelectedGoalIndex(null);
   };
 
-  //send data to backend
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
-    try {
-      
-      const response = await axios.post("http://localhost:8000/savings", {goalName:goalName, totalAmount:totalAmount, monthlyAmount:monthlyAmount});
-
-      if (response.status === 200) {
-        console.log("save goal succeed:", response.data);
-      } else {
-        console.log("save goal failed:", response.data.message);
-      }
-      setGoalName('');
-      setTotalAmount('');
-      setMonthlyAmount('');
-
-    } catch (error) {
-      console.error("save goal failed:", error.response.data.error);
+    if (selectedGoalIndex !== null) {
+      const updatedGoal = {
+        goalName,
+        totalAmount,
+        monthlyAmount,
+        createdAt: savingGoals[selectedGoalIndex].createdAt,
+      };
+      const updatedGoals = [...savingGoals];
+      updatedGoals[selectedGoalIndex] = updatedGoal;
+      setSavingGoals(updatedGoals);
+    } else {
+      const newGoal = {
+        goalName,
+        totalAmount,
+        monthlyAmount,
+        createdAt: new Date().toLocaleDateString(),
+      };
+      setSavingGoals([...savingGoals, newGoal]);
     }
-
+    handleCloseModal();
   };
-  
-  //get goals from db and setgoals
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/savings")
-      .then((res) => {
-        setSavingGoals(res.data.saving.rows);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+
+  const handleDeleteGoal = (index) => {
+    setSavingGoals(savingGoals.filter((_, i) => i !== index));
+  };
+
+  const handleEditGoal = (index) => {
+    const goal = savingGoals[index];
+    setGoalName(goal.goalName);
+    setTotalAmount(goal.totalAmount);
+    setMonthlyAmount(goal.monthlyAmount);
+    setSelectedGoalIndex(index);
+    handleOpenModal();
+  };
+
+  const resetForm = () => {
+    setGoalName('');
+    setTotalAmount('');
+    setMonthlyAmount('');
+  };
+
+  const calculateProgress = (goal) => {
+    const progress = (goal.monthlyAmount / goal.totalAmount) * 100;
+    return progress.toFixed(2);
+  };
+
+  const calculateEstimatedTime = (goal) => {
+    const months = Math.ceil(goal.totalAmount / goal.monthlyAmount);
+    const today = new Date();
+    today.setMonth(today.getMonth() + months);
+    return today.toLocaleDateString();
+  };
+
+  const calculateProgressBarColor = (goal) => {
+    const progress = (goal.monthlyAmount / goal.totalAmount) * 100;
+    return progress >= 100 ? 'primary' : 'secondary';
+  };
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -107,8 +124,8 @@ const Savings = () => {
       </Box>
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/dashboard" color="inherit" underline="none">
+          <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+            <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -126,12 +143,12 @@ const Savings = () => {
                   Home
                 </Typography>
               </Box>
-            </Link>
-          </Paper>
+            </Paper>
+          </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/add" color="inherit" underline="none">
+          <Link to="/add" style={{ textDecoration: 'none' }}>
+            <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -146,15 +163,15 @@ const Savings = () => {
               >
                 <AddCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                Money Management
+                  Money Management
                 </Typography>
               </Box>
-            </Link>
-          </Paper>
+            </Paper>
+          </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/profile" color="inherit" underline="none">
+          <Link to="/profile" style={{ textDecoration: 'none' }}>
+            <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -172,12 +189,12 @@ const Savings = () => {
                   Profile
                 </Typography>
               </Box>
-            </Link>
-          </Paper>
+            </Paper>
+          </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/savings" color="inherit" underline="none">
+          <Link to="/savings" style={{ textDecoration: 'none' }}>
+            <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -195,75 +212,146 @@ const Savings = () => {
                   Savings
                 </Typography>
               </Box>
-            </Link>
-          </Paper>
+            </Paper>
+          </Link>
         </Grid>
         <Grid item xs={10}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box mb={2}>
-              <form onSubmit={handleFormSubmit}>
-                <Typography variant="h6" color="primary">
-                  Add Saving Goal
-                </Typography>
-                <Box display="flex" mt={2}>
-                  <Box mr={2}>
-                    <Typography variant="body1">Goal Name:</Typography>
-                    <input type="text" value={goalName} onChange={(e) => setGoalName(e.target.value)} />
-                  </Box>
-                  <Box mr={2}>
-                    <Typography variant="body1">Total Amount:</Typography>
-                    <input type="text" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} />
-                  </Box>
-                  <Box mr={2}>
-                    <Typography variant="body1">Monthly Amount:</Typography>
-                    <input type="text" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} />
-                  </Box>
-                  <Button type="submit" variant="contained" color="primary">
-                    Add Goal
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenModal}
+                sx={{ borderRadius: 20, textTransform: 'none' }}
+              >
+                Add Saving Goal
+              </Button>
+              <Dialog open={openModal} onClose={handleCloseModal}>
+                <DialogTitle>
+                  {selectedGoalIndex !== null ? 'Edit' : 'Add'} Saving Goal
+                </DialogTitle>
+                <DialogContent>
+                  <form onSubmit={handleFormSubmit}>
+                    <TextField
+                      label="Goal Name"
+                      fullWidth
+                      value={goalName}
+                      onChange={(e) => setGoalName(e.target.value)}
+                      margin="normal"
+                      variant="outlined"
+                    />
+                    <TextField
+                      label="Total Amount"
+                      fullWidth
+                      value={totalAmount}
+                      onChange={(e) => setTotalAmount(e.target.value)}
+                      margin="normal"
+                      variant="outlined"
+                    />
+                    <TextField
+                      label="Monthly Amount"
+                      fullWidth
+                      value={monthlyAmount}
+                      onChange={(e) => setMonthlyAmount(e.target.value)}
+                      margin="normal"
+                      variant="outlined"
+                    />
+                  </form>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseModal} color="primary">
+                    Cancel
                   </Button>
-                </Box>
-              </form>
+                  <Button
+                    onClick={handleFormSubmit}
+                    variant="contained"
+                    color="primary"
+                  >
+                    {selectedGoalIndex !== null ? 'Update' : 'Create'} Goal
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Box>
             <Box>
               <Typography variant="h6" color="primary">
                 Saving Goals
               </Typography>
-
-              <TableContainer component={Paper} mt={2}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Goal Name</TableCell>
-                      <TableCell>Total Amount</TableCell>
-                      <TableCell>Monthly Amount</TableCell>
-                      <TableCell>Months to Reach Goal</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {savingGoals.map((goal, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{goal.goalname}</TableCell>
-                        <TableCell>${goal.totalamount}</TableCell>
-                        <TableCell>${goal.monthlyamount}</TableCell>
-                        <TableCell>{calculateMonthsToGoal(goal.totalamount, goal.monthlyamount)}</TableCell>
-                        <TableCell>
-                          <IconButton color="secondary" onClick={() => handleDeleteSavingGoal(index)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
+              {savingGoals.length > 0 ? (
+                <TableContainer component={Paper} sx={{ marginTop: 2 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Goal Name</TableCell>
+                        <TableCell>Total Amount</TableCell>
+                        <TableCell>Monthly Amount</TableCell>
+                        <TableCell>Progress</TableCell>
+                        <TableCell>Estimated Time</TableCell>
+                        <TableCell>Created At</TableCell>
+                        <TableCell>Actions</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              
+                    </TableHead>
+                    <TableBody>
+                      {savingGoals.map((goal, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{goal.goalName}</TableCell>
+                          <TableCell>${goal.totalAmount}</TableCell>
+                          <TableCell>${goal.monthlyAmount}</TableCell>
+                          <TableCell>
+                            <Box display="flex" alignItems="center">
+                              <Box width="100%" mr={1}>
+                                <LinearProgress
+                                  variant="determinate"
+                                  value={calculateProgress(goal)}
+                                  color={calculateProgressBarColor(goal)}
+                                />
+                              </Box>
+                              <Box minWidth={35}>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {calculateProgress(goal)}%
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            {calculateEstimatedTime(goal)}
+                          </TableCell>
+                          <TableCell>
+                            {new Date(goal.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleEditGoal(index)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              color="secondary"
+                              onClick={() => handleDeleteGoal(index)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              ) : (
+                <Typography variant="body1" mt={2}>
+                  No saving goals found.
+                </Typography>
+              )}
             </Box>
           </Paper>
         </Grid>
       </Grid>
     </Box>
-    
   );
 };
 
