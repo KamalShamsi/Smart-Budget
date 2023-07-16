@@ -23,10 +23,11 @@ import Cookies from "js-cookie";
 
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
+  const [cashFlow, setCashFlow] = useState(0);
   const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
 
-  const getBalance = async () => {
+  const getCashFLow = async () => {
     try {
       const userId = Cookies.get("user_id");
 
@@ -53,15 +54,34 @@ const Dashboard = () => {
         0
       );
 
-      // Calculate the balance
-      let balance = totalIncome - totalExpense;
-      setBalance(balance);
-      setIncome(totalIncome);
-      setExpenses(totalExpense);
+      setCashFlow(totalIncome - totalExpense);
+    } catch (error) {
+      console.error("Failed to retrieve cashFlow:", error);
+    }
+  };
+
+  const getBalance = async () => {
+    try {
+      const userId = Cookies.get("user_id");
+
+      const balanceRes = await axios.get(
+        `http://localhost:8000/balance/${userId}`
+      );
+      let balance = balanceRes.data[0];
+      setBalance(balance ? balance.amount : 0);
     } catch (error) {
       console.error("Failed to retrieve balance:", error);
     }
   };
+
+  const loadData = async () => {
+    await getCashFLow();
+    await getBalance();
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   useEffect(() => {
     getBalance();
@@ -247,7 +267,7 @@ const Dashboard = () => {
                 Cash Flow
               </Typography>
               <Typography variant="h5" color="#132c4a" mt={1}>
-                $2,030
+                ${cashFlow}
               </Typography>
               <Typography variant="body2" color="#132c4a" mt={1}>
                 $4,530 income - $2,500 expenses
@@ -301,21 +321,14 @@ const Dashboard = () => {
                     fill="#8884d8"
                   >
                     {pieChartData.map((entry, index) => (
-                      <Cell
-                        key={index}
-                        fill={COLORS[index % COLORS.length]}
-                      />
+                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip />
                 </PieChart>
                 <Box textAlign="left" ml={4}>
                   {pieChartData.map((entry, index) => (
-                    <Typography
-                      key={index}
-                      variant="body2"
-                      color="#132c4a"
-                    >
+                    <Typography key={index} variant="body2" color="#132c4a">
                       {entry.category}: ${entry.amount}
                     </Typography>
                   ))}

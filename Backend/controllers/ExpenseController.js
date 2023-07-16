@@ -11,12 +11,12 @@ const client = new Client({
 client.connect();
 
 exports.addExpense = async (req, res) => {
-  const { name, amount, date_added, user_id } = req.body;
+  const { name, amount, date_added, user_id, category } = req.body;
 
   try {
     const query =
-      "INSERT INTO expenses (name, amount, date_added, user_id) VALUES ($1, $2, $3, $4) RETURNING *";
-    const values = [name, amount, date_added, user_id];
+      "INSERT INTO expenses (name, amount, date_added, user_id, category) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+    const values = [name, amount, date_added, user_id, category];
 
     const result = await client.query(query, values);
     const addedExpense = result.rows[0];
@@ -46,11 +46,11 @@ exports.getExpense = async (req, res) => {
 };
 
 exports.removeExpense = async (req, res) => {
-  const { id } = req.params;
+  const { user_id, id } = req.body;
 
   try {
-    const query = "DELETE FROM expenses WHERE id = $1";
-    const values = [id];
+    const query = "DELETE FROM expenses WHERE user_id = $1 AND id=$2";
+    const values = [user_id, id];
 
     await client.query(query, values);
 

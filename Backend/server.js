@@ -26,6 +26,34 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Smart Budget API");
 });
 
+const dropAllTables = async () => {
+  try {
+    await client.query(
+      "DROP TABLE IF EXISTS incomes, expenses, profiles, balance, savings, budget"
+    );
+    console.log("All tables dropped");
+  } catch (error) {
+    console.error("Error dropping tables:", error);
+  }
+};
+
+//create budget table
+const createBudgetTable = async () => {
+  try {
+    await client.query(
+      `
+      CREATE TABLE IF NOT EXISTS budget (
+        id SERIAL PRIMARY KEY,
+        amount DECIMAL(10, 2) NOT NULL,
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES profiles(id));`
+    );
+    console.log("budget table created");
+  } catch (error) {
+    console.error("Error creating budget table:", error);
+  }
+};
+
 // Create profiles table
 const createProfilesTable = async () => {
   try {
@@ -107,6 +135,23 @@ const createExpensesTable = async () => {
     console.log("Expenses table created");
   } catch (error) {
     console.error("Error creating expenses table:", error);
+  }
+};
+
+//create balance table
+const createBalanceTable = async () => {
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS balance (
+      id SERIAL PRIMARY KEY,
+      amount DECIMAL(10, 2) NOT NULL,
+      user_id INT ,
+      FOREIGN KEY (user_id) REFERENCES profiles(id)
+    );
+    `);
+    console.log("Balance table created");
+  } catch (error) {
+    console.error("Error creating balance table:", error);
   }
 };
 
@@ -241,11 +286,17 @@ client
   .connect()
   .then(() => {
     createProfilesTable().then(() => {
-      createIncomesTable().then(() => {
-        createExpensesTable().then(() => {
-          createSavingTable().then(() => {
-            app.listen(port, () => {
-              console.log(`Server is running on port ${port}`);
+      createBalanceTable().then(() => {
+        createIncomesTable().then(() => {
+          createExpensesTable().then(() => {
+            createBalanceTable().then(() => {
+              createSavingTable().then(() => {
+                createBudgetTable().then(() => {
+                  app.listen(port, () => {
+                    console.log(`Server is running on port ${port}`);
+                  });
+                });
+              });
             });
           });
         });
