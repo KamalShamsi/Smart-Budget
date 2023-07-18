@@ -26,6 +26,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     marginBottom: theme.spacing(2),
   },
+  warning: {
+    color: theme.palette.error.main,
+    marginBottom: theme.spacing(2),
+    fontSize: '14px',
+    textAlign: 'center',
+  },
 }));
 
 const RegisterForm = () => {
@@ -37,18 +43,24 @@ const RegisterForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (
-      username.trim() == '' ||
-      password.trim() == '' ||
-      firstName.trim() == '' ||
-      lastName.trim() == '' ||
-      confirmPassword.trim() == ''
+      username.trim() === '' ||
+      password.trim() === '' ||
+      firstName.trim() === '' ||
+      lastName.trim() === '' ||
+      confirmPassword.trim() === ''
     ) {
       alert('Please fill in all fields.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setPasswordError(true);
       return;
     }
 
@@ -109,6 +121,10 @@ const RegisterForm = () => {
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        error={passwordError}
+        helperText={
+          passwordError && 'Password must be at least 6 characters long.'
+        }
       />
       <TextField
         className={classes.textField}

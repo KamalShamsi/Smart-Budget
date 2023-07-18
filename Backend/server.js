@@ -191,7 +191,7 @@ app.post("/register", async (req, res) => {
   const { username, password, firstName, lastName, email } = req.body;
 
   try {
-    // Check if the username or email is already taken
+    // Check if the username is already taken
     const existingUser = await client.query(
       "SELECT * FROM public.profiles WHERE username = $1 OR email = $2",
       [username, email]
@@ -200,6 +200,14 @@ app.post("/register", async (req, res) => {
       return res
         .status(400)
         .json({ error: "Username or email already exists" });
+    }
+
+    // Implement a minimum password length requirement
+    const minimumPasswordLength = 6;
+    if (password.length < minimumPasswordLength) {
+      return res
+        .status(400)
+        .json({ error: `Password must be at least ${minimumPasswordLength} characters long` });
     }
 
     // Insert a new user profile into the database
