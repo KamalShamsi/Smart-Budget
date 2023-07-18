@@ -15,6 +15,7 @@ import {
 import { Home as HomeIcon, AddCircle as AddCircleIcon, AccountCircle as AccountCircleIcon, MonetizationOn as MonetizationOnIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import Cookies from "js-cookie";
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
@@ -22,8 +23,10 @@ const Savings = () => {
   const [goalName, setGoalName] = useState('');
   const [goalTotal, setGoalTotal] = useState('');
   const [payment, setPayment] = useState('');
+  const [savingsLoaded, setSavingsLoaded] = useState(false);
   const [selectedGoalIndex, setSelectedGoalIndex] = useState(null);
 
+  
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -34,51 +37,67 @@ const Savings = () => {
     setSelectedGoalIndex(null);
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    if (selectedGoalIndex !== null) {
-      const updatedGoal = {
+  const addSavingGoal = async () => {
+    try {
+      let user_id = Cookies.get("user_id");
+      const response = await axios.post("http://localhost:8000/add-saving",{
         goal: goalName,
         total: goalTotal,
         payment: payment,
-        createdAt: savingGoals[selectedGoalIndex].createdAt,
-      };
-      const updatedGoals = [...savingGoals];
-      updatedGoals[selectedGoalIndex] = updatedGoal;
-      setSavingGoals(updatedGoals);
-      try {
-        await axios.put(`http://localhost:8000/savings/${savingGoals[selectedGoalIndex].id}`, updatedGoal);
-      } catch (error) {
-        console.error('Error updating saving goal:', error);
+        date_added: new Date().toLocaleDateString(),
+        user_id: user_id,
+      });
+      if (response.status == 201) {
+        console.log("saving goal success:", response.data);
+        setSavingsLoaded(false);
       }
-    } else {
-      const newGoal = {
-        goal: goalName,
-        total: goalTotal,
-        payment: payment,
-      };
-      try {
-        const response = await axios.post('http://localhost:8000/savings', newGoal);
-        if (response.status === 200) {
-          setSavingGoals([...savingGoals, response.data.goal]);
-        }
-      } catch (error) {
-        console.error('Error creating saving goal:', error);
-      }
+    } catch (error) {
+      console.log(error)
     }
     handleCloseModal();
   };
-
-  const handleDeleteGoal = async (index) => {
-    const goal = savingGoals[index];
+  
+  const handleDeleteGoal = async (id) => {
+    let user_id = Cookies.get("user_id");
     try {
-      const response = await axios.delete(`http://localhost:8000/savings/${goal.id}`);
-      if (response.status === 200) {
-        setSavingGoals(savingGoals.filter((_, i) => i !== index));
+      const response = await axios.post("http://localhost:8000/del-saving", {
+        user_id: user_id,
+        id: id,
+      });
+      console.log(response.status)
+      if (response.status == 200) {
+        console.log("delete success");
+        setSavingsLoaded(false);
       }
+      
     } catch (error) {
-      console.error('Error deleting saving goal:', error);
+      console.log(error);
     }
+    
+  };
+
+  useEffect(() => {
+    const getSavings = async () => {
+      try {
+        let user_id = Cookies.get("user_id");
+        const response = await axios.get(
+          `http://localhost:8000/savings/${user_id}`
+        );
+        if (response.status == 200) {
+          setSavingGoals(response.data)
+        }
+      } catch (error) {
+        console.log("failed to get savings");
+      };
+    };
+    getSavings();
+    setSavingsLoaded(true);
+  }, [savingsLoaded]);
+
+  const resetForm = () => {
+    setGoalName('');
+    setGoalTotal('');
+    setPayment('');
   };
 
   const handleEditGoal = (index) => {
@@ -90,40 +109,6 @@ const Savings = () => {
     handleOpenModal();
   };
 
-  const resetForm = () => {
-    setGoalName('');
-    setGoalTotal('');
-    setPayment('');
-  };
-
-  useEffect(() => {
-    const fetchSavingGoals = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/savings');
-        if (response.status === 200) {
-          setSavingGoals(response.data.savings);
-        }
-      } catch (error) {
-        console.error('Error fetching saving goals:', error);
-      }
-    };
-
-    fetchSavingGoals();
-  }, []);
-
-  const chartData = {
-    labels: savingGoals.map((_, index) => index),
-    datasets: [
-      {
-        label: 'Total Amount',
-        data: savingGoals.map((goal) => goal.total),
-        backgroundColor: 'rgba(76, 175, 80, 0.4)',
-        borderColor: 'rgba(76, 175, 80, 1)',
-        borderWidth: 2,
-        fill: 'origin',
-      },
-    ],
-  };
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -271,7 +256,7 @@ const Savings = () => {
                           <IconButton
                             size="small"
                             color="error"
-                            onClick={() => handleDeleteGoal(index)}
+                            onClick={() => handleDeleteGoal(savingGoals[index].id)}
                           >
                             <DeleteIcon />
                           </IconButton>
@@ -300,7 +285,6 @@ const Savings = () => {
       </Grid>
       <Dialog open={openModal} onClose={handleCloseModal}>
         <DialogTitle>{selectedGoalIndex !== null ? 'Edit Goal' : 'Add Goal'}</DialogTitle>
-        <form onSubmit={handleFormSubmit}>
           <DialogContent>
             <TextField
               autoFocus
@@ -332,11 +316,10 @@ const Savings = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseModal}>Cancel</Button>
-            <Button type="submit" color="primary">
+            <Button onClick={addSavingGoal()} color="primary">
               {selectedGoalIndex !== null ? 'Update' : 'Add'}
             </Button>
           </DialogActions>
-        </form>
       </Dialog>
     </Box>
   );
