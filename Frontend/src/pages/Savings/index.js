@@ -38,25 +38,46 @@ const Savings = () => {
   };
 
   const addSavingGoal = async () => {
-    try {
-      let user_id = Cookies.get("user_id");
-      const response = await axios.post("http://localhost:8000/add-saving",{
-        goal: goalName,
-        total: goalTotal,
-        payment: payment,
-        date_added: new Date().toLocaleDateString(),
-        user_id: user_id,
-      });
-      if (response.status == 201) {
-        console.log("saving goal success:", response.data);
-        setSavingsLoaded(false);
+
+    if (selectedGoalIndex != null) {
+      try {
+        const response = await axios.put("http://localhost:8000/edit-saving", {
+          goal: goalName,
+          total: goalTotal,
+          payment: payment,
+          id: savingGoals[selectedGoalIndex].id
+        });
+        if (response.status == 200) {
+          console.log("edit success");
+          setSavingsLoaded(false);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error)
+      
+    } else {
+      try {
+        let user_id = Cookies.get("user_id");
+        const response = await axios.post("http://localhost:8000/add-saving",{
+          goal: goalName,
+          total: goalTotal,
+          payment: payment,
+          date_added: new Date().toLocaleDateString(),
+          user_id: user_id,
+        });
+        if (response.status == 201) {
+          console.log("saving goal success:", response.data);
+          setSavingsLoaded(false);
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
+
     handleCloseModal();
   };
   
+
   const handleDeleteGoal = async (id) => {
     let user_id = Cookies.get("user_id");
     try {

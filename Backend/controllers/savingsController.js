@@ -61,16 +61,15 @@ exports.removeSaving = async (req, res) => {
 };
 
 exports.editSaving = async (req, res) => {
-  const { goal, total, payment, date_added, id } = req.body;
+  const { goal, total, payment, id } = req.body;
   try {
-    const query = "UPDATE savings SET (goal, total, payment, date_added) VALUES ($1, $2, $3, $4) WHERE id = $5";
-    values = [goal, total, payment, date_added, id];
+    const query = "UPDATE savings SET goal = $1, total = $2, payment = $3 WHERE id = $4";
+    values = [goal, total, payment, id];
     const result = await client.query(query, values);
     res.status(200).json();
   } catch (error) {
     console.log("edit savings failed");
     res.status(500).json({ error: "Failed to edit savings" });
   }
-  
 };
 
