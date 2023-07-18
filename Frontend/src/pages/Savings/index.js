@@ -289,7 +289,7 @@ const Savings = () => {
                         Monthly Amount: ${goal.payment}
                       </Typography>
                       <Typography variant="body1" color="text.secondary">
-                        Created At: {goal.createdAt}
+                        Created At: {new Date(goal.date_added).toLocaleDateString()}
                       </Typography>
                     </Paper>
                   </Grid>
