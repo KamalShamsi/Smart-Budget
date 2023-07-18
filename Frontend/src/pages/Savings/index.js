@@ -94,12 +94,6 @@ const Savings = () => {
     setSavingsLoaded(true);
   }, [savingsLoaded]);
 
-  const resetForm = () => {
-    setGoalName('');
-    setGoalTotal('');
-    setPayment('');
-  };
-
   const handleEditGoal = (index) => {
     const goal = savingGoals[index];
     setGoalName(goal.goal);
@@ -109,6 +103,11 @@ const Savings = () => {
     handleOpenModal();
   };
 
+  const resetForm = () => {
+    setGoalName('');
+    setGoalTotal('');
+    setPayment('');
+  };
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -316,7 +315,7 @@ const Savings = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseModal}>Cancel</Button>
-            <Button onClick={addSavingGoal()} color="primary">
+            <Button onClick={addSavingGoal} color="primary">
               {selectedGoalIndex !== null ? 'Update' : 'Add'}
             </Button>
           </DialogActions>
