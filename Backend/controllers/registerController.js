@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+const bcrypt = require('bcrypt');
 
 const client = new Client({
   user: 'smartbudget',
@@ -33,13 +34,14 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Username already exists' });
     }
 
-    // Insert a new user profile into the database
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert a new user profile into the database with the hashed password
     await client.query(
       'INSERT INTO profiles (username, password, first_name, last_name) VALUES ($1, $2, $3, $4)',
-      [username, password, firstName, lastName]
+      [username, hashedPassword, firstName, lastName]
     );
-
-    await client.end();
 
     return res.status(200).json({ message: 'Registration successful' });
   } catch (error) {
