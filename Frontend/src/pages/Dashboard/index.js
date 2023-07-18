@@ -26,8 +26,9 @@ const Dashboard = () => {
   const [cashFlow, setCashFlow] = useState(0);
   const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
+  const [currentMonth, setCurrentMonth] = useState("");
 
-  const getCashFLow = async () => {
+  const getCashFlow = async () => {
     try {
       const userId = Cookies.get("user_id");
 
@@ -55,6 +56,8 @@ const Dashboard = () => {
       );
 
       setCashFlow(totalIncome - totalExpense);
+      setIncome(totalIncome);
+      setExpenses(totalExpense);
     } catch (error) {
       console.error("Failed to retrieve cashFlow:", error);
     }
@@ -75,16 +78,15 @@ const Dashboard = () => {
   };
 
   const loadData = async () => {
-    await getCashFLow();
+    await getCashFlow();
     await getBalance();
   };
 
   useEffect(() => {
     loadData();
-  }, []);
-
-  useEffect(() => {
-    getBalance();
+    const today = new Date();
+    const month = today.toLocaleString("default", { month: "long" });
+    setCurrentMonth(month);
   }, []);
 
   // Sample data for demonstration
@@ -240,7 +242,7 @@ const Dashboard = () => {
                 $3,500
               </Typography>
               <Typography variant="body2" color="#132c4a" mt={1}>
-                January Budget
+                July Budget
               </Typography>
             </Box>
           </Paper>
@@ -249,14 +251,26 @@ const Dashboard = () => {
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
-                Savings Goal
+                Monthly Income & Expenses
               </Typography>
-              <Typography variant="h5" color="#132c4a" mt={1}>
-                $9,800
-              </Typography>
-              <Typography variant="body2" color="#132c4a" mt={1}>
-                Progress towards $15,000 goal
-              </Typography>
+              <Box display="flex" justifyContent="space-around">
+                <Box>
+                  <Typography variant="h5" color="#132c4a" mt={1}>
+                    ${income}
+                  </Typography>
+                  <Typography variant="body2" color="#132c4a" mt={1}>
+                    {currentMonth} Income
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="h5" color="#132c4a" mt={1}>
+                    ${expenses}
+                  </Typography>
+                  <Typography variant="body2" color="#132c4a" mt={1}>
+                    {currentMonth} Expenses
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
           </Paper>
         </Grid>
@@ -275,7 +289,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={8} sm={6} md={5}>
+        <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
@@ -334,36 +348,6 @@ const Dashboard = () => {
                   ))}
                 </Box>
               </Box>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Box textAlign="center">
-              <Typography variant="h6" color="#132c4a">
-                Monthly Income
-              </Typography>
-              <Typography variant="h5" color="#132c4a" mt={1}>
-                ${income}
-              </Typography>
-              <Typography variant="body2" color="#132c4a" mt={1}>
-                Total Income for the Month
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Box textAlign="center">
-              <Typography variant="h6" color="#132c4a">
-                Monthly Expenses
-              </Typography>
-              <Typography variant="h5" color="#132c4a" mt={1}>
-                ${expenses}
-              </Typography>
-              <Typography variant="body2" color="#132c4a" mt={1}>
-                Total Expenses for the Month
-              </Typography>
             </Box>
           </Paper>
         </Grid>
