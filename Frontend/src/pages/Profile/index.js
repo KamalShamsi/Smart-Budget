@@ -10,6 +10,7 @@ import {
 } from '@mui/icons-material';
 import Cookies from "js-cookie";
 import axios from "axios";
+import MenuBar from "../../components/MenuBar"
 
 const Profile = () => {
 
@@ -85,98 +86,7 @@ const Profile = () => {
         />
       </Box>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/dashboard" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#1976d2',
-                  '&:hover': {
-                    bgcolor: '#1565c0',
-                  },
-                }}
-              >
-                <HomeIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Home
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/add" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#0d47a1',
-                  '&:hover': {
-                    bgcolor: '#0a3b8d',
-                  },
-                }}
-              >
-                <AddCircleIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Add
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/profile" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#1b5e20',
-                  '&:hover': {
-                    bgcolor: '#145214',
-                  },
-                }}
-              >
-                <AccountCircleIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Profile
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/savings" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#ff6f00',
-                  '&:hover': {
-                    bgcolor: '#e65100',
-                  },
-                }}
-              >
-                <MonetizationOnIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Savings
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
+        <MenuBar/>
         {/* Profile-specific components */}
         <Grid item xs={12} md={10}>
           <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
