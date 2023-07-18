@@ -92,6 +92,7 @@ const createSavingTable = async () => {
         goal VARCHAR(50),
         total INTEGER,
         payment INTEGER,
+        date_added DATE NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES public.profiles(id)
       );
@@ -158,33 +159,6 @@ const createBalanceTable = async () => {
     console.error("Error creating balance table:", error);
   }
 };
-
-// savings endpoint
-app.post("/savings", async (req, res) => {
-  const { goal, total, payment } = req.body;
-  try {
-    await client.query(
-      "INSERT INTO public.savings (goal, total, payment) VALUES ($1, $2, $3)",
-      [goal, total, payment]
-    );
-    return res.status(200).json({ message: "Saving goal created" });
-  } catch (error) {
-    console.error("Saving goal creation failed:", error);
-    return res.status(500).json({ error: "Saving goal creation failed" });
-  }
-});
-
-app.get("/savings", async (req, res) => {
-  try {
-    const savings = await client.query(
-      "SELECT goal, total, payment FROM public.savings"
-    );
-    return res.status(200).json({ savings: savings.rows });
-  } catch (error) {
-    console.error("Error fetching savings:", error);
-    return res.status(500).json({ error: "Error fetching savings" });
-  }
-});
 
 // Register endpoint
 app.post("/register", async (req, res) => {
