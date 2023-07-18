@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -12,29 +11,17 @@ import {
   DialogActions,
   TextField,
   IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  LinearProgress,
 } from '@mui/material';
-import {
-  Home as HomeIcon,
-  AddCircle as AddCircleIcon,
-  AccountCircle as AccountCircleIcon,
-  MonetizationOn as MonetizationOnIcon,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material';
+import { Home as HomeIcon, AddCircle as AddCircleIcon, AccountCircle as AccountCircleIcon, MonetizationOn as MonetizationOnIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [goalName, setGoalName] = useState('');
-  const [totalAmount, setTotalAmount] = useState('');
-  const [monthlyAmount, setMonthlyAmount] = useState('');
+  const [goalTotal, setGoalTotal] = useState('');
+  const [payment, setPayment] = useState('');
   const [selectedGoalIndex, setSelectedGoalIndex] = useState(null);
 
   const handleOpenModal = () => {
@@ -47,64 +34,95 @@ const Savings = () => {
     setSelectedGoalIndex(null);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (selectedGoalIndex !== null) {
       const updatedGoal = {
-        goalName,
-        totalAmount,
-        monthlyAmount,
+        goal: goalName,
+        total: goalTotal,
+        payment: payment,
         createdAt: savingGoals[selectedGoalIndex].createdAt,
       };
       const updatedGoals = [...savingGoals];
       updatedGoals[selectedGoalIndex] = updatedGoal;
       setSavingGoals(updatedGoals);
+      try {
+        await axios.put(`http://localhost:8000/savings/${savingGoals[selectedGoalIndex].id}`, updatedGoal);
+      } catch (error) {
+        console.error('Error updating saving goal:', error);
+      }
     } else {
       const newGoal = {
-        goalName,
-        totalAmount,
-        monthlyAmount,
-        createdAt: new Date().toLocaleDateString(),
+        goal: goalName,
+        total: goalTotal,
+        payment: payment,
       };
-      setSavingGoals([...savingGoals, newGoal]);
+      try {
+        const response = await axios.post('http://localhost:8000/savings', newGoal);
+        if (response.status === 200) {
+          setSavingGoals([...savingGoals, response.data.goal]);
+        }
+      } catch (error) {
+        console.error('Error creating saving goal:', error);
+      }
     }
     handleCloseModal();
   };
 
-  const handleDeleteGoal = (index) => {
-    setSavingGoals(savingGoals.filter((_, i) => i !== index));
+  const handleDeleteGoal = async (index) => {
+    const goal = savingGoals[index];
+    try {
+      const response = await axios.delete(`http://localhost:8000/savings/${goal.id}`);
+      if (response.status === 200) {
+        setSavingGoals(savingGoals.filter((_, i) => i !== index));
+      }
+    } catch (error) {
+      console.error('Error deleting saving goal:', error);
+    }
   };
 
   const handleEditGoal = (index) => {
     const goal = savingGoals[index];
-    setGoalName(goal.goalName);
-    setTotalAmount(goal.totalAmount);
-    setMonthlyAmount(goal.monthlyAmount);
+    setGoalName(goal.goal);
+    setGoalTotal(goal.total);
+    setPayment(goal.payment);
     setSelectedGoalIndex(index);
     handleOpenModal();
   };
 
   const resetForm = () => {
     setGoalName('');
-    setTotalAmount('');
-    setMonthlyAmount('');
+    setGoalTotal('');
+    setPayment('');
   };
 
-  const calculateProgress = (goal) => {
-    const progress = (goal.monthlyAmount / goal.totalAmount) * 100;
-    return progress.toFixed(2);
-  };
+  useEffect(() => {
+    const fetchSavingGoals = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/savings');
+        if (response.status === 200) {
+          setSavingGoals(response.data.savings);
+        }
+      } catch (error) {
+        console.error('Error fetching saving goals:', error);
+      }
+    };
 
-  const calculateEstimatedTime = (goal) => {
-    const months = Math.ceil(goal.totalAmount / goal.monthlyAmount);
-    const today = new Date();
-    today.setMonth(today.getMonth() + months);
-    return today.toLocaleDateString();
-  };
+    fetchSavingGoals();
+  }, []);
 
-  const calculateProgressBarColor = (goal) => {
-    const progress = (goal.monthlyAmount / goal.totalAmount) * 100;
-    return progress >= 100 ? 'primary' : 'secondary';
+  const chartData = {
+    labels: savingGoals.map((_, index) => index),
+    datasets: [
+      {
+        label: 'Total Amount',
+        data: savingGoals.map((goal) => goal.total),
+        backgroundColor: 'rgba(76, 175, 80, 0.4)',
+        borderColor: 'rgba(76, 175, 80, 1)',
+        borderWidth: 2,
+        fill: 'origin',
+      },
+    ],
   };
 
   return (
@@ -113,18 +131,11 @@ const Savings = () => {
         <Typography variant="h4" color="white">
           Savings
         </Typography>
-        <Box
-          bgcolor="#1565c0"
-          height={2}
-          width={150}
-          mx="auto"
-          my={2}
-          borderRadius={5}
-        />
+        <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
       </Box>
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={6} sm={3} md={2}>
-          <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+          <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
@@ -147,7 +158,7 @@ const Savings = () => {
           </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Link to="/add" style={{ textDecoration: 'none' }}>
+          <Link to="/add" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
@@ -170,7 +181,7 @@ const Savings = () => {
           </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Link to="/profile" style={{ textDecoration: 'none' }}>
+          <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
@@ -193,7 +204,7 @@ const Savings = () => {
           </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Link to="/savings" style={{ textDecoration: 'none' }}>
+          <Link to="/savings" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
@@ -221,136 +232,112 @@ const Savings = () => {
               <Button
                 variant="contained"
                 color="primary"
+                startIcon={<AddCircleIcon />}
                 onClick={handleOpenModal}
-                sx={{ borderRadius: 20, textTransform: 'none' }}
               >
                 Add Saving Goal
               </Button>
-              <Dialog open={openModal} onClose={handleCloseModal}>
-                <DialogTitle>
-                  {selectedGoalIndex !== null ? 'Edit' : 'Add'} Saving Goal
-                </DialogTitle>
-                <DialogContent>
-                  <form onSubmit={handleFormSubmit}>
-                    <TextField
-                      label="Goal Name"
-                      fullWidth
-                      value={goalName}
-                      onChange={(e) => setGoalName(e.target.value)}
-                      margin="normal"
-                      variant="outlined"
-                    />
-                    <TextField
-                      label="Total Amount"
-                      fullWidth
-                      value={totalAmount}
-                      onChange={(e) => setTotalAmount(e.target.value)}
-                      margin="normal"
-                      variant="outlined"
-                    />
-                    <TextField
-                      label="Monthly Amount"
-                      fullWidth
-                      value={monthlyAmount}
-                      onChange={(e) => setMonthlyAmount(e.target.value)}
-                      margin="normal"
-                      variant="outlined"
-                    />
-                  </form>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseModal} color="primary">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleFormSubmit}
-                    variant="contained"
-                    color="primary"
-                  >
-                    {selectedGoalIndex !== null ? 'Update' : 'Create'} Goal
-                  </Button>
-                </DialogActions>
-              </Dialog>
             </Box>
-            <Box>
-              <Typography variant="h6" color="primary">
-                Saving Goals
+            {savingGoals.length > 0 ? (
+              <Grid container spacing={2}>
+                {savingGoals.map((goal, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Paper
+                      elevation={3}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        p: 2,
+                        height: '100%',
+                        backgroundColor: '#fafafa',
+                      }}
+                    >
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
+                        <Typography variant="h6" component="div">
+                          {goal.goal}
+                        </Typography>
+                        <Box>
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => handleEditGoal(index)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleDeleteGoal(index)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                      <Typography variant="body1" color="text.secondary">
+                        Total Amount: ${goal.total}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Monthly Amount: ${goal.payment}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Created At: {goal.createdAt}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography variant="body1" color="text.secondary">
+                No saving goals found. Start by adding a new goal.
               </Typography>
-              {savingGoals.length > 0 ? (
-                <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Goal Name</TableCell>
-                        <TableCell>Total Amount</TableCell>
-                        <TableCell>Monthly Amount</TableCell>
-                        <TableCell>Progress</TableCell>
-                        <TableCell>Estimated Time</TableCell>
-                        <TableCell>Created At</TableCell>
-                        <TableCell>Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {savingGoals.map((goal, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{goal.goalName}</TableCell>
-                          <TableCell>${goal.totalAmount}</TableCell>
-                          <TableCell>${goal.monthlyAmount}</TableCell>
-                          <TableCell>
-                            <Box display="flex" alignItems="center">
-                              <Box width="100%" mr={1}>
-                                <LinearProgress
-                                  variant="determinate"
-                                  value={calculateProgress(goal)}
-                                  color={calculateProgressBarColor(goal)}
-                                />
-                              </Box>
-                              <Box minWidth={35}>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
-                                  {calculateProgress(goal)}%
-                                </Typography>
-                              </Box>
-                            </Box>
-                          </TableCell>
-                          <TableCell>
-                            {calculateEstimatedTime(goal)}
-                          </TableCell>
-                          <TableCell>
-                            {new Date(goal.createdAt).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              size="small"
-                              color="primary"
-                              onClick={() => handleEditGoal(index)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              color="secondary"
-                              onClick={() => handleDeleteGoal(index)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              ) : (
-                <Typography variant="body1" mt={2}>
-                  No saving goals found.
-                </Typography>
-              )}
-            </Box>
+            )}
           </Paper>
         </Grid>
       </Grid>
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>{selectedGoalIndex !== null ? 'Edit Goal' : 'Add Goal'}</DialogTitle>
+        <form onSubmit={handleFormSubmit}>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Goal Name"
+              fullWidth
+              value={goalName}
+              onChange={(e) => setGoalName(e.target.value)}
+              required
+            />
+            <TextField
+              margin="dense"
+              label="Total"
+              type="number"
+              fullWidth
+              value={goalTotal}
+              onChange={(e) => setGoalTotal(e.target.value)}
+              required
+            />
+            <TextField
+              margin="dense"
+              label="Payment"
+              type="number"
+              fullWidth
+              value={payment}
+              onChange={(e) => setPayment(e.target.value)}
+              required
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal}>Cancel</Button>
+            <Button type="submit" color="primary">
+              {selectedGoalIndex !== null ? 'Update' : 'Add'}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </Box>
   );
 };

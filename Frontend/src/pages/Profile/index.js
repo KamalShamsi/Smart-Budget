@@ -93,7 +93,7 @@ const Profile = () => {
               >
                 <AddCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Add
+                  Money Management
                 </Typography>
               </Box>
             </Link>

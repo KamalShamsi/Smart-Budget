@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -20,7 +20,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Home as HomeIcon,
   AddCircle as AddCircleIcon,
@@ -30,20 +30,141 @@ import {
   ViewList as ViewListIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
+import axios, { all } from "axios";
+import Cookies from "js-cookie";
 
 const AddTransaction = () => {
   const [transactions, setTransactions] = useState([]);
   const [open, setOpen] = useState(false);
   const [showAllTransactions, setShowAllTransactions] = useState(false);
-  const [transactionType, setTransactionType] = useState('income');
-  const [transactionCategory, setTransactionCategory] = useState('food');
-  const [transactionName, setTransactionName] = useState('');
-  const [transactionValue, setTransactionValue] = useState('');
-  const [selectedTransactionType, setSelectedTransactionType] = useState('income');
-  const [budget, setBudget] = useState(0);
+  const [transactionType, setTransactionType] = useState("income");
+  const [transactionCategory, setTransactionCategory] = useState("food");
+  const [transactionName, setTransactionName] = useState("");
+  const [transactionValue, setTransactionValue] = useState("");
+  const [selectedTransactionType, setSelectedTransactionType] =
+    useState("income");
+  const [budget, setBudget] = useState({ amount: 0, id: null });
   const [budgetDialogOpen, setBudgetDialogOpen] = useState(false);
   const [budgetError, setBudgetError] = useState(false);
+  const [income, setIncome] = useState([]);
+  const [expense, setExpense] = useState([]);
+
+  const [isBudgetSet, setIsBudgetSet] = useState(false);
+
+  const [transactionLoaded, setTransactionLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchBudget = async () => {
+      try {
+        let user_id = Cookies.get("user_id");
+        const response = await axios.get(
+          `http://localhost:8000/budget/${user_id}`
+        );
+
+        if (response.status === 200 && response.data.length > 0) {
+          setBudget({
+            amount: response.data[0].amount,
+            id: response.data[0].id,
+          });
+          setIsBudgetSet(true);
+          return response.data[0];
+        }
+        return { amount: 0, id: null };
+      } catch (error) {
+        console.error("Failed to fetch budget:", error);
+      }
+    };
+
+    const fetchTransactions = async () => {
+      try {
+        let user_id = Cookies.get("user_id");
+        const incomeRes = await axios.get(
+          `http://localhost:8000/incomes/${user_id}`
+        );
+        const expenseRes = await axios.get(
+          `http://localhost:8000/expenses/${user_id}`
+        );
+        const incomeData = incomeRes.data.map((transaction) => ({
+          ...transaction,
+          type: "income",
+        }));
+
+        const expenseData = expenseRes.data.map((transaction) => ({
+          ...transaction,
+          type: "expense",
+        }));
+
+        let allTransactions = incomeData
+          .concat(expenseData)
+          .map((transaction) => ({
+            name: transaction.name,
+            value: transaction.amount,
+            type: transaction.type,
+            date: transaction.date_added,
+            category: transaction.category,
+            id: transaction.id,
+          }));
+        setTransactionLoaded(true);
+        return allTransactions;
+      } catch (error) {
+        console.error("Failed to fetch transactions:", error);
+      }
+    };
+    if (!transactionLoaded) {
+      fetchBudget();
+      fetchTransactions().then((allTransactions) => {
+        if (allTransactions.length === 0) {
+          setIncome(0);
+          setExpense(0);
+          return;
+        }
+        getCurrentMonthTotal("income", allTransactions);
+        getCurrentMonthTotal("expense", allTransactions);
+        setTransactions(allTransactions);
+      });
+    }
+  }, [transactionLoaded]);
+
+  const handleAddIncome = async () => {
+    try {
+      let user_id = Cookies.get("user_id");
+      const response = await axios.post("http://localhost:8000/add-income", {
+        name: transactionName,
+        amount: transactionValue,
+        date_added: new Date().toLocaleDateString(),
+        user_id: user_id,
+      });
+      if (response.status === 201) {
+        console.log("income success:", response.data);
+        setTransactionLoaded(false);
+      } else {
+        console.log("income failed:", response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddExpense = async () => {
+    try {
+      let user_id = Cookies.get("user_id");
+      const response = await axios.post("http://localhost:8000/add-expense", {
+        name: transactionName,
+        amount: transactionValue,
+        date_added: new Date().toLocaleDateString(),
+        user_id: user_id,
+      });
+      if (response.status === 201) {
+        console.log("expense success:", response.data);
+        setTransactionLoaded(false);
+      } else {
+        console.log("expense failed:", response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -62,7 +183,13 @@ const AddTransaction = () => {
     setShowAllTransactions(false);
   };
 
-  const handleAddTransaction = () => {
+  const handleAddTransaction = async () => {
+    if (transactionType === "income") {
+      await handleAddIncome();
+    } else {
+      await handleAddExpense();
+    }
+
     const newTransaction = {
       name: transactionName,
       value: transactionValue,
@@ -72,38 +199,64 @@ const AddTransaction = () => {
     };
 
     setTransactions([...transactions, newTransaction]);
-    setTransactionName('');
-    setTransactionValue('');
+    setTransactionName("");
+    setTransactionValue("");
     setOpen(false);
   };
 
-  const handleDeleteTransaction = (index) => {
+  const handleDeleteTransaction = (id, type) => {
+    let user_id = Cookies.get("user_id");
+
+    if (type === "income") {
+      axios.post("http://localhost:8000/del-income", {
+        user_id: user_id,
+        id: id,
+      });
+      setTransactionLoaded(false);
+    } else {
+      axios.post("http://localhost:8000/del-expense", {
+        user_id: user_id,
+        id: id,
+      });
+      setTransactionLoaded(false);
+    }
+
     setTransactions((prevTransactions) =>
-      prevTransactions.filter((_, i) => i !== index)
+      prevTransactions.filter((item) => item.id !== id && item.type === type)
     );
   };
 
-  const getCurrentMonthTotal = (type) => {
+  const getCurrentMonthTotal = (type, trans) => {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
 
-    const filteredTransactions = transactions.filter(
+    const filteredTransactions = trans.filter(
       (transaction) =>
         transaction.type === type &&
         new Date(transaction.date).getMonth() + 1 === currentMonth &&
         new Date(transaction.date).getFullYear() === currentYear
     );
 
-    const total = filteredTransactions.reduce(
+    let total = filteredTransactions.reduce(
       (sum, transaction) => sum + parseFloat(transaction.value),
       0
     );
 
-    return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    total = total.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+
+    if (type === "income") {
+      setIncome(total);
+      console.log("income", total);
+    } else {
+      setExpense(total);
+    }
   };
 
-  const handleBudgetDialogOpen = () => {
+  const handleBudgetDialogOpen = async () => {
     setBudgetDialogOpen(true);
   };
 
@@ -112,21 +265,37 @@ const AddTransaction = () => {
     setBudgetError(false);
   };
 
-  const handleBudgetInputChange = (event) => {
-    setBudget(parseFloat(event.target.value));
+  const handleBudgetInputChange = async (event) => {
+    setBudget({ amount: parseFloat(event.target.value), id: null });
   };
 
-  const handleSetBudget = () => {
-    if (budget < 0) {
+  const handleSetBudget = async () => {
+    if (budget.amount < 0) {
       setBudgetError(true);
       return;
+    }
+
+    try {
+      await axios.post("http://localhost:8000/add-budget", {
+        user_id: Cookies.get("user_id"),
+        amount: budget.amount,
+      });
+      setIsBudgetSet(true);
+      setTransactionLoaded(false);
+    } catch (error) {
+      console.log(error);
     }
 
     setBudgetDialogOpen(false);
   };
 
   const handleDeleteBudget = () => {
-    setBudget(0);
+    axios.post("http://localhost:8000/del-budget", {
+      user_id: Cookies.get("user_id"),
+      id: budget.id,
+    });
+    setIsBudgetSet(false);
+    setBudget({ amount: 0, id: null });
   };
 
   return (
@@ -261,7 +430,7 @@ const AddTransaction = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleViewAllTransactions('income')}
+                  onClick={() => handleViewAllTransactions("income")}
                   sx={{ marginRight: 2 }}
                 >
                   View All Incomes
@@ -269,7 +438,7 @@ const AddTransaction = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => handleViewAllTransactions('expense')}
+                  onClick={() => handleViewAllTransactions("expense")}
                 >
                   View All Expenses
                 </Button>
@@ -290,16 +459,16 @@ const AddTransaction = () => {
           <Fade in={open}>
             <Box
               sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'white',
-                border: '2px solid #000',
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "white",
+                border: "2px solid #000",
                 boxShadow: 24,
                 p: 4,
-                maxWidth: '500px',
-                width: '100%',
+                maxWidth: "500px",
+                width: "100%",
               }}
             >
               <Typography variant="h5" color="primary" align="center" mb={3}>
@@ -322,7 +491,7 @@ const AddTransaction = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                {transactionType === 'expense' && (
+                {transactionType === "expense" && (
                   <Grid item xs={12} md={6}>
                     <FormControl fullWidth>
                       <InputLabel id="transaction-category-label">
@@ -337,7 +506,9 @@ const AddTransaction = () => {
                         <MenuItem value="food">Food</MenuItem>
                         <MenuItem value="utilities">Utilities</MenuItem>
                         <MenuItem value="housing">Housing</MenuItem>
-                        <MenuItem value="transportation">Transportation</MenuItem>
+                        <MenuItem value="transportation">
+                          Transportation
+                        </MenuItem>
                         <MenuItem value="entertainment">Entertainment</MenuItem>
                       </Select>
                     </FormControl>
@@ -387,25 +558,21 @@ const AddTransaction = () => {
           <Fade in={showAllTransactions}>
             <Box
               sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'white',
-                border: '2px solid #000',
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "white",
+                border: "2px solid #000",
                 boxShadow: 24,
                 p: 4,
-                maxWidth: '800px',
-                width: '100%',
+                maxWidth: "800px",
+                width: "100%",
               }}
             >
-              <Typography
-                variant="h5"
-                color="primary"
-                align="center"
-                mb={3}
-              >
-                View All {selectedTransactionType === 'income' ? 'Incomes' : 'Expenses'}
+              <Typography variant="h5" color="primary" align="center" mb={3}>
+                View All{" "}
+                {selectedTransactionType === "income" ? "Incomes" : "Expenses"}
               </Typography>
               <TableContainer component={Paper}>
                 <Table>
@@ -414,7 +581,11 @@ const AddTransaction = () => {
                       <TableCell>
                         <Typography
                           variant="h6"
-                          color={selectedTransactionType === 'income' ? 'primary' : 'secondary'}
+                          color={
+                            selectedTransactionType === "income"
+                              ? "primary"
+                              : "secondary"
+                          }
                         >
                           Name
                         </Typography>
@@ -422,7 +593,11 @@ const AddTransaction = () => {
                       <TableCell>
                         <Typography
                           variant="h6"
-                          color={selectedTransactionType === 'income' ? 'primary' : 'secondary'}
+                          color={
+                            selectedTransactionType === "income"
+                              ? "primary"
+                              : "secondary"
+                          }
                         >
                           Value
                         </Typography>
@@ -430,16 +605,24 @@ const AddTransaction = () => {
                       <TableCell>
                         <Typography
                           variant="h6"
-                          color={selectedTransactionType === 'income' ? 'primary' : 'secondary'}
+                          color={
+                            selectedTransactionType === "income"
+                              ? "primary"
+                              : "secondary"
+                          }
                         >
                           Date
                         </Typography>
                       </TableCell>
-                      {selectedTransactionType === 'expense' && (
+                      {selectedTransactionType === "expense" && (
                         <TableCell>
                           <Typography
                             variant="h6"
-                            color={selectedTransactionType === 'income' ? 'primary' : 'secondary'}
+                            color={
+                              selectedTransactionType === "income"
+                                ? "primary"
+                                : "secondary"
+                            }
                           >
                             Category
                           </Typography>
@@ -448,7 +631,11 @@ const AddTransaction = () => {
                       <TableCell>
                         <Typography
                           variant="h6"
-                          color={selectedTransactionType === 'income' ? 'primary' : 'secondary'}
+                          color={
+                            selectedTransactionType === "income"
+                              ? "primary"
+                              : "secondary"
+                          }
                         >
                           Action
                         </Typography>
@@ -457,18 +644,28 @@ const AddTransaction = () => {
                   </TableHead>
                   <TableBody>
                     {transactions
-                      .filter((transaction) => transaction.type === selectedTransactionType)
+                      .filter(
+                        (transaction) =>
+                          transaction.type === selectedTransactionType
+                      )
                       .map((transaction, index) => (
                         <TableRow key={index}>
                           <TableCell>{transaction.name}</TableCell>
                           <TableCell>${transaction.value}</TableCell>
                           <TableCell>{transaction.date}</TableCell>
-                          {transaction.type === 'expense' && <TableCell>{transaction.category}</TableCell>}
+                          {transaction.type === "expense" && (
+                            <TableCell>{transaction.category}</TableCell>
+                          )}
                           <TableCell>
                             <Button
                               variant="contained"
                               color="secondary"
-                              onClick={() => handleDeleteTransaction(index)}
+                              onClick={() =>
+                                handleDeleteTransaction(
+                                  transaction.id,
+                                  transaction.type
+                                )
+                              }
                             >
                               Delete
                             </Button>
@@ -489,7 +686,7 @@ const AddTransaction = () => {
           mb={3}
           mt={2}
         >
-          {budget === 0 ? (
+          {!isBudgetSet ? (
             <Button
               variant="contained"
               color="primary"
@@ -499,9 +696,10 @@ const AddTransaction = () => {
               Set Budget
             </Button>
           ) : (
-            <Paper elevation={3} sx={{ p: 2, bgcolor: '#f9f9f9' }}>
+            <Paper elevation={3} sx={{ p: 2, bgcolor: "#f9f9f9" }}>
               <Typography variant="h6" color="primary" align="center">
-                Monthly Budget ({new Date().toLocaleString('en-us', { month: 'long' })})
+                Monthly Budget (
+                {new Date().toLocaleString("en-us", { month: "long" })})
               </Typography>
               <Box
                 display="flex"
@@ -510,7 +708,10 @@ const AddTransaction = () => {
                 mt={2}
               >
                 <Typography variant="h4" color="primary" align="center">
-                  {budget.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                  {budget.amount.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
                 </Typography>
                 <Button
                   variant="contained"
@@ -538,33 +739,34 @@ const AddTransaction = () => {
           <Fade in={budgetDialogOpen}>
             <Box
               sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'white',
-                border: '2px solid #000',
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "white",
+                border: "2px solid #000",
                 boxShadow: 24,
                 p: 4,
-                maxWidth: '500px',
-                width: '100%',
+                maxWidth: "500px",
+                width: "100%",
               }}
             >
               <Typography variant="h5" color="primary" align="center" mb={3}>
                 Set Budget
               </Typography>
               <Typography variant="body1" align="center" mb={3}>
-                Set the budget for the month of {new Date().toLocaleString('en-us', { month: 'long' })}.
+                Set the budget for the month of{" "}
+                {new Date().toLocaleString("en-us", { month: "long" })}.
               </Typography>
               <TextField
                 label="Budget Amount"
                 variant="outlined"
                 fullWidth
                 type="number"
-                value={budget}
+                value={budget.amount}
                 onChange={handleBudgetInputChange}
                 error={budgetError}
-                helperText={budgetError && 'Invalid budget amount'}
+                helperText={budgetError && "Invalid budget amount"}
               />
               <Box mt={3} display="flex" justifyContent="center">
                 <Button
@@ -581,22 +783,22 @@ const AddTransaction = () => {
 
         <Grid container spacing={3} justifyContent="center">
           <Grid item xs={12} md={5}>
-            <Paper elevation={3} sx={{ p: 2, bgcolor: '#f9f9f9' }}>
+            <Paper elevation={3} sx={{ p: 2, bgcolor: "#f9f9f9" }}>
               <Typography variant="h6" color="primary" align="center">
                 Total Income
               </Typography>
               <Typography variant="h4" color="primary" align="center">
-                {getCurrentMonthTotal('income')}
+                {income}
               </Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={5}>
-            <Paper elevation={3} sx={{ p: 2, bgcolor: '#f9f9f9' }}>
+            <Paper elevation={3} sx={{ p: 2, bgcolor: "#f9f9f9" }}>
               <Typography variant="h6" color="secondary" align="center">
                 Total Expenses
               </Typography>
               <Typography variant="h4" color="secondary" align="center">
-                {getCurrentMonthTotal('expense')}
+                {expense}
               </Typography>
             </Paper>
           </Grid>

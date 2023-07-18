@@ -32,3 +32,27 @@ exports.updateProfile = async (req, res) => {
     return res.status(500).json({ error: 'An error occurred while updating the profile' });
   }
 };
+
+exports.login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    await client.connect();
+
+    // Query the database to find the user with the provided username and password
+    const queryText = 'SELECT * FROM profiles WHERE username = $1 AND password = $2';
+    const values = [username, password];
+    const result = await client.query(queryText, values);
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    await client.end();
+
+    return res.status(200).json({ message: 'Login successful' });
+  } catch (error) {
+    console.error('Error during login:', error);
+    return res.status(500).json({ error: 'An error occurred during login' });
+  }
+};
