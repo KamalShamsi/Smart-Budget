@@ -1,5 +1,5 @@
-import React, { useEffect, useState }  from 'react';
-import { Box, Typography, Grid, Paper, Button, Link } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Grid, Paper, Button, Link, TextField } from '@mui/material';
 import {
   Home as HomeIcon,
   AddCircle as AddCircleIcon,
@@ -7,8 +7,6 @@ import {
   MonetizationOn as MonetizationOnIcon,
   ExitToApp as ExitToAppIcon,
   GetApp as GetAppIcon,
-  Person as PersonIcon,
-  Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -16,13 +14,16 @@ import axios from "axios";
 const Profile = () => {
 
   const [userProfile, setUserProfile] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   const getUserProfile = async () => {
     try {
       const token = Cookies.get("tok");
       const response = await axios.get("http://localhost:8000/profile", {
         headers: {
-          Authorization: `${token}`,
+          Authorization: token,
         },
       });
       if (response.status === 200) {
@@ -36,6 +37,37 @@ const Profile = () => {
   useEffect(() => {
     getUserProfile();
   }, []);
+
+  const handleEditClick = () => {
+    setEditMode(true);
+  };
+
+  const handleSaveClick = async () => {
+    try {
+      const token = Cookies.get("tok");
+      const response = await axios.post(
+        "http://localhost:8000/profile",
+        {
+          firstName,
+          lastName,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setUserProfile(response.data.profile);
+        setFirstName(response.data.profile.first_name);
+        setLastName(response.data.profile.last_name);
+        setEditMode(false);
+      }
+    } catch (error) {
+      console.error("Failed to update user profile:", error);
+      setEditMode(false);
+    }
+  };
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -93,7 +125,7 @@ const Profile = () => {
               >
                 <AddCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Money Management
+                  Add
                 </Typography>
               </Box>
             </Link>
@@ -150,7 +182,6 @@ const Profile = () => {
           <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
             <Box
               display="flex"
-              flexDirection="column"
               alignItems="center"
               justifyContent="center"
               height="100%"
@@ -161,13 +192,10 @@ const Profile = () => {
                 mb={2}
                 sx={{ color: 'white' }}
               >
-                <PersonIcon fontSize="large" />
                 <Typography variant="h6" ml={1} color="black">
-                  Username: {userProfile.username}
+                  {userProfile.username}
                 </Typography>
               </Box>
-              {/* Add icon or profile picture here */}
-              <AccountCircleIcon fontSize="large" sx={{ color: 'white' }} />
             </Box>
           </Paper>
         </Grid>
@@ -180,20 +208,57 @@ const Profile = () => {
               height="100%"
             >
               <Box textAlign="center" color="black">
-                <Typography variant="h5" mb={2}>
-                  User Information
-                </Typography>
-                <Typography variant="body1" mb={1} color="black">
-                  First Name: {userProfile.first_name}
-                </Typography>
-                <Typography variant="body1" mb={1} color="black">
-                  Last Name: {userProfile.last_name}
-                </Typography>
+              {editMode ? (
+                  <>
+                    <TextField
+                      label="First Name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      fullWidth
+                      mb={1}
+                    />
+                    <TextField
+                      label="Last Name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      fullWidth
+                      mb={1}
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={handleSaveClick}
+                      sx={{ mt: 2, width: '100%' }}
+                      startIcon={<GetAppIcon />}
+                    >
+                      Save
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="body1" mb={1} color="black">
+                      First Name: {userProfile.first_name}
+                    </Typography>
+                    <Typography variant="body1" mb={1} color="black">
+                      Last Name: {userProfile.last_name}
+                    </Typography>
+                    <Typography variant="body1" mb={1} color="black">
+                      Email: 
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={handleEditClick}
+                      sx={{ mt: 2, width: '100%' }}
+                      startIcon={<ExitToAppIcon />}
+                    >
+                      Edit
+                    </Button>
+                  </>
+                )}
               </Box>
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={10}> 
+        <Grid item xs={12} md={10}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
               <Button

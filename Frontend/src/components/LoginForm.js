@@ -64,7 +64,7 @@ const LoginForm = () => {
 
         // Store the user ID and token in the browser cookies
         Cookies.set("user_id", userId);
-
+        Cookies.set ("tok", token)
         navigate("/dashboard"); // Redirect to the dashboard page
       } else {
         console.log("Login failed:", response.data.message);
