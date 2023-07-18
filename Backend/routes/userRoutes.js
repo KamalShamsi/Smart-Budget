@@ -30,7 +30,7 @@ router.post('/del-budget', budgetController.removeBudget);
 // Savings routes
 router.post('/add-saving', savingsController.addSaving);
 router.get('/savings/:user_id', savingsController.getSaving);
-router.delete('/del-saving/:id', savingsController.removeSaving);
-router.put('/update-saving/:id', savingsController.updateSaving);
+router.post('/del-saving', savingsController.removeSaving);
+router.put('/edit-saving', savingsController.editSaving);
 
 module.exports = router;
