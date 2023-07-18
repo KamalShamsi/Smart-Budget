@@ -8,84 +8,69 @@ const client = new Client({
   port: 5432, // Default PostgreSQL port
 });
 
-// Connect to the PostgreSQL database
 client.connect();
 
 // Controller functions
-const addSaving = async (req, res) => {
-  const { goal, total, payment, user_id } = req.body;
+exports.addSaving = async (req, res) => {
+  const { goal, total, payment, date_added, user_id } = req.body;
 
   try {
-    // Insert the new saving goal into the database
-    const result = await client.query(
-      'INSERT INTO savings (goal, total, payment, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
-      [goal, total, payment, user_id]
-    );
+    const query = 
+      "INSERT INTO savings (goal, total, payment, date_added, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+    const values = [goal, total, payment, date_added, user_id];
 
-    return res.status(201).json({ goal: result.rows[0] });
+    const result = await client.query(query, values);
+    const addedSaving = result.rows[0];
+    
+    res.status(201).json(addedSaving);
   } catch (error) {
-    console.error('Error creating saving goal:', error);
-    return res.status(500).json({ error: 'Failed to create saving goal' });
+    console.error("Error adding saving goal:", error);
+    res.status(500).json({error: "Failed to add saving goal"});
   }
 };
 
-const getSaving = async (req, res) => {
+exports.getSaving = async (req, res) => {
   const { user_id } = req.params;
 
   try {
     // Fetch all saving goals for a specific user from the database
-    const { rows } = await client.query('SELECT * FROM savings WHERE user_id = $1', [user_id]);
+    const result = await client.query('SELECT * FROM savings WHERE user_id = $1', [user_id]);
+    savings = result.rows;
 
-    return res.status(200).json({ saving: rows });
+    return res.status(200).json(savings);
   } catch (error) {
     console.error('Error fetching saving goals:', error);
     return res.status(500).json({ error: 'Failed to fetch saving goals' });
   }
 };
 
-const removeSaving = async (req, res) => {
-  const savingGoalId = req.params.id;
+exports.removeSaving = async (req, res) => {
+  const { user_id, id } = req.body;
 
   try {
-    console.log('Deleting saving goal with ID:', savingGoalId);
+    const query = "DELETE FROM savings WHERE user_id = $1 AND id = $2";
+    const values = [user_id, id];
 
-    // Delete the saving goal from the database
-    await client.query('DELETE FROM savings WHERE id = $1', [savingGoalId]);
+    await client.query(query, values);
 
-    console.log('Saving goal deleted successfully');
-
-    return res.status(200).json({ message: 'Saving goal deleted successfully' });
+    return res.status(200).json({ message: "saving removed successfully" });
   } catch (error) {
-    console.error('Error deleting saving goal:', error);
-    return res.status(500).json({ error: 'Failed to delete saving goal' });
+    console.error("Error removing saving:", error);
+    return res.status(500).json({ error: "Failed to remove saving" });
   }
 };
 
-const updateSaving = async (req, res) => {
-  const savingGoalId = req.params.id;
-  const { goal, total, payment, user_id } = req.body;
-
+exports.editSaving = async (req, res) => {
+  const { goal, total, payment, date_added, id } = req.body;
   try {
-    // Update the saving goal in the database
-    const result = await client.query(
-      'UPDATE savings SET goal_name = $1, total_amount = $2, monthly_amount = $3 WHERE id = $4 RETURNING *',
-      [goal, total, payment, savingGoalId]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Saving goal not found' });
-    }
-
-    return res.status(200).json({ goal: result.rows[0] });
+    const query = "UPDATE savings SET (goal, total, payment, date_added) VALUES ($1, $2, $3, $4) WHERE id = $5";
+    values = [goal, total, payment, date_added, id];
+    const result = await client.query(query, values);
+    res.status(200).json();
   } catch (error) {
-    console.error('Error updating saving goal:', error);
-    return res.status(500).json({ error: 'Failed to update saving goal' });
+    console.log("edit savings failed");
+    res.status(500).json({ error: "Failed to edit savings" });
   }
+  
 };
 
-module.exports = {
-  addSaving,
-  getSaving,
-  removeSaving,
-  updateSaving,
-};
