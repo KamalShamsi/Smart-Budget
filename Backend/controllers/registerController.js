@@ -15,6 +15,14 @@ exports.register = async (req, res) => {
     // Extract registration data from request body
     const { username, firstName, lastName, password } = req.body;
 
+    // Implement a minimum password length requirement
+    const minimumPasswordLength = 6;
+    if (password.length < minimumPasswordLength) {
+      return res
+        .status(400)
+        .json({ error: `Password must be at least ${minimumPasswordLength} characters long` });
+    }
+
     // Check if the username is already taken
     const existingUser = await client.query(
       'SELECT * FROM profiles WHERE username = $1',
