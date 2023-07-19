@@ -11,12 +11,13 @@ import MenuButton from "./MenuButton";
 function MenuBar() {
   return (
     <Grid container spacing={3} justifyContent="center">
-      <MenuButton link="/dashboard" name="Home" color="#1976d2" hovercolor ="#1565c0" />
-      <MenuButton link="/add" name="Money Management" color="#0d47a1" hovercolor ="#0a3b8d" />
-      <MenuButton link="/profile" name="Profile" color="#1b5e20" hovercolor ="#145214" />
-      <MenuButton link="/savings" name="Savings" color="#ff6f00" hovercolor ="#e65100" />
+      <MenuButton link="/dashboard" name="Home" color="#7bc043" hovercolor ="#ffd900" />
+      <MenuButton link="/add" name="Manage" color="#0392cf" hovercolor ="#ffd900" />
+      <MenuButton link="/profile" name="Profile" color="#f37736" hovercolor ="#ffd900" />
+      <MenuButton link="/savings" name="Savings" color="#ee4035" hovercolor ="#ffd900" />
     </Grid>
   )
 }
+
 
 export default MenuBar

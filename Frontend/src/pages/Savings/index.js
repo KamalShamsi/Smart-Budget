@@ -132,13 +132,11 @@ const Savings = () => {
   };
 
   return (
-    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
-      <Box textAlign="center" mb={3}>
-        <Typography variant="h4" color="white">
-          Savings
-        </Typography>
-        <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
-      </Box>
+    <Box bgcolor="#f9766c" minHeight="100vh" p={3}>
+      <div display="inline">
+        <Typography variant="h6" color="white">$mart Budget</Typography>
+        <Typography variant="h4" color="white" paddingBottom="30px" textAlign="center" >Savings</Typography>
+      </div>
       <Grid container spacing={3} justifyContent="center">
         <MenuBar/>
         <Grid item xs={10}>

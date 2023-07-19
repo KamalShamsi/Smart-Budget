@@ -105,28 +105,20 @@ const Dashboard = () => {
   const pieChartData = [
     { category: "Food", amount: 250 },
     { category: "Transportation", amount: 180 },
-    { category: "Entertainment", amount: 300 },
+    { category: "Entertainment", amount: 200 },
     { category: "Utilities", amount: 200 },
     { category: "Shopping", amount: 150 },
   ];
 
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ffc658", "#ffc658"];
+  const COLORS = ["#f44336", "#ff9966", "#ffcc00", "#99cc33", "#00ac00"];
 
   return (
-    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
-      <Box textAlign="center" mb={3}>
-        <Typography variant="h4" color="white">
-          Dashboard
-        </Typography>
-        <Box
-          bgcolor="#1565c0"
-          height={2}
-          width={150}
-          mx="auto"
-          my={2}
-          borderRadius={5}
-        />
-      </Box>
+    <Box bgcolor="#b6d7a8" minHeight="100vh" p={3}>
+      <div display="inline">
+        <Typography variant="h6" color="white">$mart Budget</Typography>
+        <Typography variant="h4" color="white" paddingBottom="30px" textAlign="center" >Dashboard</Typography>
+      </div>
+      
       <Grid container spacing={3} justifyContent="center">
         <MenuBar/>
         <Grid item xs={8} sm={5} md={5}>
@@ -208,22 +200,22 @@ const Dashboard = () => {
                 Monthly Income & Expenses
               </Typography>
               <ResponsiveContainer width="95%" height={400}>
-                <LineChart width={650} height={300} data={monthlyStatsData}>
+                <LineChart width={650} height={300} data={monthlyStatsData} style={{fontSize: '0.8rem', fontFamily: 'Arial',}}> 
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Legend verticalAlign="top" height={36} />
+                  <Legend verticalAlign="top" height={36} style={{fontSize: '0.8rem', fontFamily: 'Arial',}}/>
                   <Line
                     type="monotone"
                     dataKey="income"
-                    stroke="#8884d8"
+                    stroke="#00ac00"
                     name="Income"
                   />
                   <Line
                     type="monotone"
                     dataKey="expenses"
-                    stroke="#82ca9d"
+                    stroke="#f44336"
                     name="Expenses"
                   />
                 </LineChart>
@@ -238,24 +230,27 @@ const Dashboard = () => {
               <Typography variant="h6" color="#132c4a">
                 Expense Categories Breakdown
               </Typography>
-              <Box display="flex" justifyContent="center">
-                <PieChart width={250} height={300}>
-                  <Pie
-                    data={pieChartData}
-                    dataKey="amount"
-                    nameKey="category"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    fill="#8884d8"
-                  >
-                    {pieChartData.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-                <Box textAlign="left" ml={4}>
+              <Box display="grid" place-items="center" justifyItems="center">
+                <ResponsiveContainer width="100%" height={300} >
+                  <PieChart width={250} height={300}>
+                    <Pie
+                      data={pieChartData}
+                      dataKey="amount"
+                      nameKey="category"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+                
+                <Box textAlign="center" ml={4} >
                   {pieChartData.map((entry, index) => (
                     <Typography key={index} variant="body2" color="#132c4a">
                       {entry.category}: ${entry.amount}

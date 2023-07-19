@@ -301,25 +301,14 @@ const AddTransaction = () => {
 
   return (
     <>
-      <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
-        <Box textAlign="center" mb={3}>
-          <Typography variant="h4" color="white">
-            Money Management
-          </Typography>
-          <Box
-            bgcolor="#1565c0"
-            height={2}
-            width={150}
-            mx="auto"
-            my={2}
-            borderRadius={5}
-          />
-        </Box>
-        <Grid container spacing={3} justifyContent="center">
-          <MenuBar/>
-        </Grid>
+      <Box bgcolor="#58b3da" minHeight="100vh" p={3}>
+        <div display="inline">
+          <Typography variant="h6" color="white">$mart Budget</Typography>
+          <Typography variant="h4" color="white" paddingBottom="30px" textAlign="center" >Money Management</Typography>
+        </div>
 
         <Grid container spacing={3} justifyContent="center">
+          <MenuBar/>
           <Grid item xs={12}>
             <Box
               display="flex"

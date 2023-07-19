@@ -14,12 +14,15 @@ function MenuButton({link, name, color, hovercolor, icon}) {
     case "Home": 
       MenuIcon = <HomeIcon fontSize="large" color="white" />;
       break;
-    case "Money Management":
+    case "Manage":
       MenuIcon = <AddCircleIcon fontSize="large" color="white" />;
+      break;
     case "Profile":
       MenuIcon = <AccountCircleIcon fontSize="large" color="white" />;
+      break;
     case "Savings":
       MenuIcon = <MonetizationOnIcon fontSize="large" color="white" />;
+      break;
     default:
       break;
   }
