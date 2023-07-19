@@ -70,6 +70,10 @@ const Profile = () => {
     }
   };
 
+  function handleLogout() {
+    Cookies.remove("user_id");
+    Cookies.remove("tok");
+  }
   return (
     <Box bgcolor="#f59664" minHeight="100vh" p={3}>
       <div display="inline">
@@ -166,6 +170,7 @@ const Profile = () => {
                 variant="contained"
                 startIcon={<ExitToAppIcon />}
                 sx={{ mt: 2, width: '100%' }}
+                onClick={handleLogout()}
                 href="/login"
               >
                 Logout
