@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Paper, Button, Link, Avatar } from '@mui/material';
+import { Box, Typography, Grid, Paper, Button, Link, TextField } from '@mui/material';
 import {
   Home as HomeIcon,
   AddCircle as AddCircleIcon,
   AccountCircle as AccountCircleIcon,
   MonetizationOn as MonetizationOnIcon,
   ExitToApp as ExitToAppIcon,
+  GetApp as GetAppIcon,
 } from '@mui/icons-material';
-
 import Cookies from "js-cookie";
 import axios from "axios";
 import MenuBar from "../../components/MenuBar"
 
-
 const Profile = () => {
-  const [userProfile, setUserProfile] = useState('');
+
+  const [userProfile, setUserProfile] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   const getUserProfile = async () => {
     try {
-      const token = Cookies.get('tok');
-      const response = await axios.get('http://localhost:8000/profile', {
+      const token = Cookies.get("tok");
+      const response = await axios.get("http://localhost:8000/profile", {
         headers: {
           Authorization: token,
         },
@@ -28,14 +31,13 @@ const Profile = () => {
         setUserProfile(response.data.profile);
       }
     } catch (error) {
-      console.error('Failed to fetch user profile:', error);
+      console.error("Failed to fetch user profile:", error);
     }
   };
 
   useEffect(() => {
     getUserProfile();
   }, []);
-
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -163,17 +165,7 @@ const Profile = () => {
         </Grid>
         <Grid item xs={12} md={10}>
           <Paper elevation={3} sx={{ p: 2 }}>
-            <Box display="flex" flexDirection="column" alignItems="center">
-              <AccountCircleIcon fontSize="large" color="primary" sx={{ mb: 2 }} />
-              <Typography variant="h6" color="primary" sx={{ mb: 1 }}>
-                {userProfile.username}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                First Name: {userProfile.first_name}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                Last Name: {userProfile.last_name}
-              </Typography>
+            <Box textAlign="center">
               <Button
                 variant="contained"
                 startIcon={<ExitToAppIcon />}
