@@ -75,6 +75,7 @@ const Profile = () => {
     Cookies.remove("tok");
   }
   return (
+    
     <Box bgcolor="#f59664" minHeight="100vh" p={3}>
       <div display="inline">
         <Typography variant="h6" color="white">$mart Budget</Typography>
