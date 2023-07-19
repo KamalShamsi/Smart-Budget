@@ -18,6 +18,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  ResponsiveContainer,
 } from "recharts";
 import Cookies from "js-cookie";
 import MenuBar from "../../components/MenuBar";
@@ -206,25 +207,28 @@ const Dashboard = () => {
               <Typography variant="h6" color="#132c4a">
                 Monthly Income & Expenses
               </Typography>
-              <LineChart width={650} height={300} data={monthlyStatsData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend verticalAlign="top" height={36} />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="#8884d8"
-                  name="Income"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="#82ca9d"
-                  name="Expenses"
-                />
-              </LineChart>
+              <ResponsiveContainer width="95%" height={400}>
+                <LineChart width={650} height={300} data={monthlyStatsData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend verticalAlign="top" height={36} />
+                  <Line
+                    type="monotone"
+                    dataKey="income"
+                    stroke="#8884d8"
+                    name="Income"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="expenses"
+                    stroke="#82ca9d"
+                    name="Expenses"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              
             </Box>
           </Paper>
         </Grid>
