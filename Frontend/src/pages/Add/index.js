@@ -31,7 +31,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import axios, { all } from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 const AddTransaction = () => {
@@ -198,27 +198,30 @@ const AddTransaction = () => {
       category: transactionCategory,
     };
 
-    setTransactions([...transactions, newTransaction]);
+    setTransactions([newTransaction, ...transactions]);
     setTransactionName("");
     setTransactionValue("");
     setOpen(false);
   };
 
-  const handleDeleteTransaction = (id, type) => {
+  const handleDeleteTransaction = async (id, type) => {
     let user_id = Cookies.get("user_id");
 
-    if (type === "income") {
-      axios.post("http://localhost:8000/del-income", {
-        user_id: user_id,
-        id: id,
-      });
+    try {
+      if (type === "income") {
+        await axios.post("http://localhost:8000/del-income", {
+          user_id: user_id,
+          id: id,
+        });
+      } else {
+        await axios.post("http://localhost:8000/del-expense", {
+          user_id: user_id,
+          id: id,
+        });
+      }
       setTransactionLoaded(false);
-    } else {
-      axios.post("http://localhost:8000/del-expense", {
-        user_id: user_id,
-        id: id,
-      });
-      setTransactionLoaded(false);
+    } catch (error) {
+      console.log(error);
     }
 
     setTransactions((prevTransactions) =>
@@ -250,13 +253,12 @@ const AddTransaction = () => {
 
     if (type === "income") {
       setIncome(total);
-      console.log("income", total);
     } else {
       setExpense(total);
     }
   };
 
-  const handleBudgetDialogOpen = async () => {
+  const handleBudgetDialogOpen = () => {
     setBudgetDialogOpen(true);
   };
 
@@ -265,7 +267,7 @@ const AddTransaction = () => {
     setBudgetError(false);
   };
 
-  const handleBudgetInputChange = async (event) => {
+  const handleBudgetInputChange = (event) => {
     setBudget({ amount: parseFloat(event.target.value), id: null });
   };
 
@@ -648,6 +650,7 @@ const AddTransaction = () => {
                         (transaction) =>
                           transaction.type === selectedTransactionType
                       )
+                      .slice(0, 10)
                       .map((transaction, index) => (
                         <TableRow key={index}>
                           <TableCell>{transaction.name}</TableCell>
@@ -671,7 +674,8 @@ const AddTransaction = () => {
                             </Button>
                           </TableCell>
                         </TableRow>
-                      ))}
+                      ))
+                      .reverse()}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -691,119 +695,185 @@ const AddTransaction = () => {
               variant="contained"
               color="primary"
               onClick={handleBudgetDialogOpen}
-              startIcon={<EditIcon />}
             >
               Set Budget
             </Button>
           ) : (
-            <Paper elevation={3} sx={{ p: 2, bgcolor: "#f9f9f9" }}>
-              <Typography variant="h6" color="primary" align="center">
-                Monthly Budget (
-                {new Date().toLocaleString("en-us", { month: "long" })})
+            <Box>
+              <Typography variant="h6" color="primary" mb={1}>
+                Budget: ${budget.amount}
               </Typography>
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="baseline"
-                mt={2}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleDeleteBudget}
               >
-                <Typography variant="h4" color="primary" align="center">
-                  {budget.amount.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  })}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleDeleteBudget}
-                  startIcon={<DeleteIcon />}
-                  sx={{ ml: 2 }}
-                >
-                  Delete Budget
-                </Button>
-              </Box>
-            </Paper>
+                Delete Budget
+              </Button>
+            </Box>
           )}
         </Box>
 
-        <Modal
-          open={budgetDialogOpen}
-          onClose={handleBudgetDialogClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <Fade in={budgetDialogOpen}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "white",
-                border: "2px solid #000",
-                boxShadow: 24,
-                p: 4,
-                maxWidth: "500px",
-                width: "100%",
-              }}
-            >
-              <Typography variant="h5" color="primary" align="center" mb={3}>
-                Set Budget
-              </Typography>
-              <Typography variant="body1" align="center" mb={3}>
-                Set the budget for the month of{" "}
-                {new Date().toLocaleString("en-us", { month: "long" })}.
-              </Typography>
-              <TextField
-                label="Budget Amount"
-                variant="outlined"
-                fullWidth
-                type="number"
-                value={budget.amount}
-                onChange={handleBudgetInputChange}
-                error={budgetError}
-                helperText={budgetError && "Invalid budget amount"}
-              />
-              <Box mt={3} display="flex" justifyContent="center">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSetBudget}
-                >
-                  Save Budget
-                </Button>
-              </Box>
-            </Box>
-          </Fade>
-        </Modal>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Box
+            bgcolor="#43a047"
+            p={2}
+            m={2}
+            borderRadius={5}
+            textAlign="center"
+            width={200}
+          >
+            <Typography variant="h6" color="white">
+              Total Income
+            </Typography>
+            <Typography variant="h4" color="white">
+              {income}
+            </Typography>
+          </Box>
+          <Box
+            bgcolor="#e53935"
+            p={2}
+            m={2}
+            borderRadius={5}
+            textAlign="center"
+            width={200}
+          >
+            <Typography variant="h6" color="white">
+              Total Expenses
+            </Typography>
+            <Typography variant="h4" color="white">
+              {expense}
+            </Typography>
+          </Box>
+        </Box>
 
-        <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} md={5}>
-            <Paper elevation={3} sx={{ p: 2, bgcolor: "#f9f9f9" }}>
-              <Typography variant="h6" color="primary" align="center">
-                Total Income
-              </Typography>
-              <Typography variant="h4" color="primary" align="center">
-                {income}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={5}>
-            <Paper elevation={3} sx={{ p: 2, bgcolor: "#f9f9f9" }}>
-              <Typography variant="h6" color="secondary" align="center">
-                Total Expenses
-              </Typography>
-              <Typography variant="h4" color="secondary" align="center">
-                {expense}
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
+        <TableContainer component={Paper} sx={{ marginTop: 5 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="h6" color="primary">
+                    Name
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" color="primary">
+                    Value
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" color="primary">
+                    Date
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" color="primary">
+                    Category
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" color="primary">
+                    Type
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" color="primary">
+                    Action
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {transactions.slice(0, 10).map((transaction, index) => (
+                <TableRow key={index}>
+                  <TableCell>{transaction.name}</TableCell>
+                  <TableCell>${transaction.value}</TableCell>
+                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{transaction.category}</TableCell>
+                  <TableCell>
+                    {transaction.type === "income" ? (
+                      <Typography variant="body1" color="primary">
+                        Income
+                      </Typography>
+                    ) : (
+                      <Typography variant="body1" color="secondary">
+                        Expense
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() =>
+                        handleDeleteTransaction(transaction.id, transaction.type)
+                      }
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
+
+      <Modal
+        open={budgetDialogOpen}
+        onClose={handleBudgetDialogClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={budgetDialogOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "white",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              maxWidth: "400px",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h5" color="primary" align="center" mb={3}>
+              Set Budget
+            </Typography>
+            <Grid container spacing={2} justifyContent="center">
+              <Grid item xs={12}>
+                <TextField
+                  label="Budget Amount"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  value={budget.amount}
+                  onChange={handleBudgetInputChange}
+                  error={budgetError}
+                  helperText={
+                    budgetError ? "Please enter a valid budget amount" : ""
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Box mt={3} display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSetBudget}
+              >
+                Set Budget
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 };
