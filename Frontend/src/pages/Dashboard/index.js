@@ -29,7 +29,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
 
-  //get values from db
+  //getters
   const getCashFlow = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -44,7 +44,6 @@ const Dashboard = () => {
 
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
-
       // Calculate the total income
       let totalIncome = incomes.reduce(
         (sum, income) => sum + parseFloat(income.amount),
@@ -97,6 +96,8 @@ const Dashboard = () => {
     }
   };
 
+  
+
   const loadData = async () => {
     await getBudget();
     await getCashFlow();
@@ -107,6 +108,7 @@ const Dashboard = () => {
     loadData();
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
+    const currentMonth = today.getMonth() + 1;
     setCurrentMonth(month);
   }, []);
 
