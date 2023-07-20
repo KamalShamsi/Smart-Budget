@@ -300,6 +300,13 @@ const AddTransaction = () => {
     setBudget({ amount: 0, id: null });
   };
 
+  const sortTransactionsByDate = () => {
+    const sortedTransactions = [...transactions].sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+    setTransactions(sortedTransactions);
+  };
+
   return (
     <>
       <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -650,7 +657,6 @@ const AddTransaction = () => {
                         (transaction) =>
                           transaction.type === selectedTransactionType
                       )
-                      .slice(0, 10)
                       .map((transaction, index) => (
                         <TableRow key={index}>
                           <TableCell>{transaction.name}</TableCell>
@@ -700,7 +706,7 @@ const AddTransaction = () => {
             </Button>
           ) : (
             <Box>
-              <Typography variant="h6" color="primary" mb={1}>
+              <Typography variant="h6" color="white" mb={1}>
                 Budget: ${budget.amount}
               </Typography>
               <Button
@@ -747,60 +753,34 @@ const AddTransaction = () => {
           </Box>
         </Box>
 
-        <TableContainer component={Paper} sx={{ marginTop: 5 }}>
+        <TableContainer component={Paper} sx={{ marginTop: "30px" }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="h6" color="primary">
-                    Name
-                  </Typography>
+                  <Typography variant="h6">Name</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" color="primary">
-                    Value
-                  </Typography>
+                  <Typography variant="h6">Value</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" color="primary">
-                    Date
-                  </Typography>
+                  <Typography variant="h6">Date</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" color="primary">
-                    Category
-                  </Typography>
+                  <Typography variant="h6">Category</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" color="primary">
-                    Type
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6" color="primary">
-                    Action
-                  </Typography>
+                  <Typography variant="h6">Action</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactions.slice(0, 10).map((transaction, index) => (
+              {transactions.map((transaction, index) => (
                 <TableRow key={index}>
                   <TableCell>{transaction.name}</TableCell>
                   <TableCell>${transaction.value}</TableCell>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.category}</TableCell>
-                  <TableCell>
-                    {transaction.type === "income" ? (
-                      <Typography variant="body1" color="primary">
-                        Income
-                      </Typography>
-                    ) : (
-                      <Typography variant="body1" color="secondary">
-                        Expense
-                      </Typography>
-                    )}
-                  </TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
@@ -839,29 +819,23 @@ const AddTransaction = () => {
               border: "2px solid #000",
               boxShadow: 24,
               p: 4,
-              maxWidth: "400px",
+              maxWidth: "500px",
               width: "100%",
             }}
           >
             <Typography variant="h5" color="primary" align="center" mb={3}>
               Set Budget
             </Typography>
-            <Grid container spacing={2} justifyContent="center">
-              <Grid item xs={12}>
-                <TextField
-                  label="Budget Amount"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  value={budget.amount}
-                  onChange={handleBudgetInputChange}
-                  error={budgetError}
-                  helperText={
-                    budgetError ? "Please enter a valid budget amount" : ""
-                  }
-                />
-              </Grid>
-            </Grid>
+            <TextField
+              label="Amount"
+              variant="outlined"
+              fullWidth
+              type="number"
+              value={budget.amount}
+              onChange={handleBudgetInputChange}
+              error={budgetError}
+              helperText={budgetError ? "Invalid budget amount" : ""}
+            />
             <Box mt={3} display="flex" justifyContent="center">
               <Button
                 variant="contained"
