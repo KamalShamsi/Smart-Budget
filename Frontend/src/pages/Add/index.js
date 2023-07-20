@@ -102,7 +102,7 @@ const AddTransaction = () => {
             name: transaction.name,
             value: transaction.amount,
             type: transaction.type,
-            date: transaction.date_added,
+            date: new Date(transaction.date_added).toLocaleDateString(),
             category: transaction.category,
             id: transaction.id,
           }));
