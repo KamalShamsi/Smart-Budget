@@ -125,6 +125,9 @@ const Dashboard = () => {
         />
       </Box>
       <Grid container spacing={3} justifyContent="center">
+        {
+          // The start of the navigation bar
+        }
         <Grid item xs={6} sm={3} md={2}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Link href="/dashboard" color="inherit" underline="none">
@@ -217,6 +220,10 @@ const Dashboard = () => {
             </Link>
           </Paper>
         </Grid>
+        
+        {
+          //balance card start
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -232,6 +239,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //monthly budget card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -247,6 +258,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //monthly income & expenses start
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -274,6 +289,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //cashflow card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -289,6 +308,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //monthly income & expenses graph
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -317,6 +340,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //expenses categories breakdown
+        }
         <Grid item xs={8} sm={6} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -351,6 +378,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
       </Grid>
     </Box>
   );
