@@ -48,6 +48,11 @@ const Dashboard = () => {
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
 
+      setAllIncome(incomeRes.data)
+      setAllExpense(expenseRes.data)
+
+      console.log("incomes:",allIncome)
+      console.log("expenses:",allExpense)
 
       // Calculate the total income
       let totalIncome = incomes.reduce(
