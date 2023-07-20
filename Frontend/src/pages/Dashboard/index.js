@@ -139,6 +139,8 @@ const Dashboard = () => {
     setCurrentMonth(month);
   }, []);
 
+
+
   // Sample data for demonstration
   const monthlyStatsData = [
     { month: "Jan", income: 5000, expenses: 3500 },
@@ -201,6 +203,7 @@ const Dashboard = () => {
             </Link>
           </Paper>
         </Grid>
+
         <Grid item xs={6} sm={3} md={2}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Link href="/add" color="inherit" underline="none">
