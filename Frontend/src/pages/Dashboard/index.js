@@ -29,6 +29,9 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
 
+  const [ allIncome, setAllIncome ] = useState([])
+  const [ allExpense, setAllExpense ] = useState([])
+
   //getters
   const getCashFlow = async () => {
     try {
@@ -44,6 +47,8 @@ const Dashboard = () => {
 
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
+
+
       // Calculate the total income
       let totalIncome = incomes.reduce(
         (sum, income) => sum + parseFloat(income.amount),
@@ -55,7 +60,7 @@ const Dashboard = () => {
         (sum, expense) => sum + parseFloat(expense.amount),
         0
       );
-
+      
       setCashFlow(totalIncome - totalExpense);
       setIncome(totalIncome);
       setExpenses(totalExpense);
@@ -96,7 +101,24 @@ const Dashboard = () => {
     }
   };
 
-  
+  //gets the total income/expense of the target month given in number
+  const getMonthTotalExpense = (target_month) => {
+    const filteredItems = allExpense.filter(
+      (i) =>
+      new Date(i.date_added).getMonth() + 1 === target_month
+    );
+    let total = filteredItems.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    return total;
+  }
+
+  const getMonthTotalIncome = (target_month) => {
+    const filteredItems = allIncome.filter(
+      (i) =>
+      new Date(i.date_added).getMonth() + 1 === target_month
+    );
+    const total = filteredItems.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    return total;
+  }
 
   const loadData = async () => {
     await getBudget();
