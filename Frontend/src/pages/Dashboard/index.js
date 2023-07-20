@@ -25,9 +25,11 @@ const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const [cashFlow, setCashFlow] = useState(0);
   const [income, setIncome] = useState(0);
+  const [budget, setBudget] = useState(0);
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
 
+  //get values from db
   const getCashFlow = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -77,7 +79,26 @@ const Dashboard = () => {
     }
   };
 
+  const getBudget = async () => {
+    try {
+      const userId = Cookies.get("user_id");
+
+      const res = await axios.get(
+        `http://localhost:8000/budget/${userId}`
+      );
+      if (res.status == 200) {
+        if (res.data.length > 0) {
+          setBudget(res.data[0].amount)
+        }
+      }
+      
+    } catch (error) {
+      console.error("Failed to retrieve budget:", error);
+    }
+  };
+
   const loadData = async () => {
+    await getBudget();
     await getCashFlow();
     await getBalance();
   };
@@ -250,7 +271,7 @@ const Dashboard = () => {
                 Monthly Budget
               </Typography>
               <Typography variant="h5" color="#132c4a" mt={1}>
-                $3,500
+                ${budget}
               </Typography>
               <Typography variant="body2" color="#132c4a" mt={1}>
                 July Budget
@@ -260,7 +281,7 @@ const Dashboard = () => {
         </Grid>
 
         {
-          //monthly income & expenses start
+          //monthly income & expenses
         }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
