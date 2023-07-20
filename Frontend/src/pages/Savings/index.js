@@ -186,7 +186,7 @@ const Savings = () => {
           </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link to="/savings" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
@@ -200,16 +200,16 @@ const Savings = () => {
                   },
                 }}
               >
-                <AccountCircleIcon fontSize="large" color="white" />
+                <MonetizationOnIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Profile
+                  Savings
                 </Typography>
               </Box>
             </Paper>
           </Link>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <Link to="/savings" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box
                 display="flex"
@@ -223,9 +223,9 @@ const Savings = () => {
                   },
                 }}
               >
-                <MonetizationOnIcon fontSize="large" color="white" />
+                <AccountCircleIcon fontSize="large" color="white" />
                 <Typography variant="body1" color="white" mt={1}>
-                  Savings
+                  Profile
                 </Typography>
               </Box>
             </Paper>

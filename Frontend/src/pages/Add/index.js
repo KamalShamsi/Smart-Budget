@@ -372,7 +372,7 @@ const AddTransaction = () => {
           </Grid>
           <Grid item xs={6} sm={3} md={2}>
             <Paper elevation={3} sx={{ p: 2 }}>
-              <Link href="/profile" color="inherit" underline="none">
+              <Link href="/savings" color="inherit" underline="none">
                 <Box
                   display="flex"
                   flexDirection="column"
@@ -385,9 +385,9 @@ const AddTransaction = () => {
                     },
                   }}
                 >
-                  <AccountCircleIcon fontSize="large" color="white" />
+                  <MonetizationOnIcon fontSize="large" color="white" />
                   <Typography variant="body1" color="white" mt={1}>
-                    Profile
+                    Savings
                   </Typography>
                 </Box>
               </Link>
@@ -395,7 +395,7 @@ const AddTransaction = () => {
           </Grid>
           <Grid item xs={6} sm={3} md={2}>
             <Paper elevation={3} sx={{ p: 2 }}>
-              <Link href="/savings" color="inherit" underline="none">
+              <Link href="/profile" color="inherit" underline="none">
                 <Box
                   display="flex"
                   flexDirection="column"
@@ -408,9 +408,9 @@ const AddTransaction = () => {
                     },
                   }}
                 >
-                  <MonetizationOnIcon fontSize="large" color="white" />
+                  <AccountCircleIcon fontSize="large" color="white" />
                   <Typography variant="body1" color="white" mt={1}>
-                    Savings
+                    Profile
                   </Typography>
                 </Box>
               </Link>
