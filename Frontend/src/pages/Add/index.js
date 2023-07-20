@@ -753,7 +753,7 @@ const AddTransaction = () => {
           </Box>
         </Box>
 
-        <TableContainer component={Paper} sx={{ marginTop: "30px" }}>
+        <TableContainer component={Paper} sx={{ marginTop: "30px", maxHeight: 400 }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -826,16 +826,19 @@ const AddTransaction = () => {
             <Typography variant="h5" color="primary" align="center" mb={3}>
               Set Budget
             </Typography>
-            <TextField
-              label="Amount"
-              variant="outlined"
-              fullWidth
-              type="number"
-              value={budget.amount}
-              onChange={handleBudgetInputChange}
-              error={budgetError}
-              helperText={budgetError ? "Invalid budget amount" : ""}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Amount"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  onChange={handleBudgetInputChange}
+                  error={budgetError}
+                  helperText={budgetError && "Budget amount must be positive"}
+                />
+              </Grid>
+            </Grid>
             <Box mt={3} display="flex" justifyContent="center">
               <Button
                 variant="contained"
