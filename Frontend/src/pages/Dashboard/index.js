@@ -32,9 +32,11 @@ const Dashboard = () => {
   const [budget, setBudget] = useState(0);
 
   const [monthlyStatsData, setMonthlyStatsData] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
 
   let monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+  //gets data 
   const getData = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -46,6 +48,8 @@ const Dashboard = () => {
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
       var temp = [];
+
+      //get month totals
       for (let i = 1; i < 13; i++) {
         let monthIncome = getMonthTotal(i, incomes);
         let monthExpense = getMonthTotal(i, expenses);
@@ -62,6 +66,19 @@ const Dashboard = () => {
       // Calculate the total expenses
       let totalExpense = getMonthTotal(currentMonthNumber, expenses);
 
+      // Calculate data for expenses pie chart
+      var temp = [];
+      const thisMonthExpenses = expenses.filter(
+        (i) =>
+        new Date(i.date_added).getMonth() + 1 === currentMonthNumber
+      );
+      for (let i = 0; i < thisMonthExpenses.length; i++) {
+        var item = thisMonthExpenses[i]
+        temp.push({category:item.category, amount:item.amount})
+      };
+      setPieChartData(temp);
+
+
       setCashFlow(totalIncome - totalExpense);
       setIncome(totalIncome);
       setExpenses(totalExpense);
@@ -70,6 +87,7 @@ const Dashboard = () => {
     }
   };
 
+  //gets the balance from the db
   const getBalance = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -82,6 +100,7 @@ const Dashboard = () => {
     }
   };
 
+  //gets the budget from the db
   const getBudget = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -93,15 +112,16 @@ const Dashboard = () => {
         if (res.data.length > 0) {
           setBudget(res.data[0].amount)
         }
+        
       }
-      
     } catch (error) {
       console.error("Failed to retrieve budget:", error);
     }
   };
 
+  //calls all getters async
   const loadData = async () => {
-    getCashFlow();
+    await getData();
     await getBalance();
     await getBudget();
   };
@@ -116,11 +136,12 @@ const Dashboard = () => {
     return total;
   }
 
+  //gets dates and data on page render
   useEffect(() => {
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
     setCurrentMonth(month);
-    getData();
+    loadData();
   }, []);
 
   // Sample data for demonstration
@@ -133,8 +154,6 @@ const Dashboard = () => {
     { month: "May", income: 7000, expenses: 3900 },
     { month: "Jun", income: 7500, expenses: 4300 },
   ];
-  */
-
   const pieChartData = [
     { category: "Food", amount: 250 },
     { category: "Transportation", amount: 180 },
@@ -142,7 +161,7 @@ const Dashboard = () => {
     { category: "Utilities", amount: 200 },
     { category: "Shopping", amount: 150 },
   ];
-
+  */
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ffc658", "#ffc658"];
 
   return (
