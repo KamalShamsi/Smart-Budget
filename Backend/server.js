@@ -74,7 +74,8 @@ const createProfilesTable = async () => {
         password VARCHAR(50),
         first_name VARCHAR(50),
         last_name VARCHAR(50),
-        email VARCHAR(100) UNIQUE
+        email VARCHAR(100) UNIQUE,
+        job VARCHAR(100)
       );
     `);
     console.log("Profiles table created");
@@ -162,7 +163,7 @@ const createBalanceTable = async () => {
 
 // Register endpoint
 app.post("/register", async (req, res) => {
-  const { username, password, firstName, lastName, email } = req.body;
+  const { username, password, firstName, lastName, email, job} = req.body;
 
   try {
     // Check if the username is already taken
@@ -186,8 +187,8 @@ app.post("/register", async (req, res) => {
 
     // Insert a new user profile into the database
     await client.query(
-      "INSERT INTO public.profiles (username, password, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5)",
-      [username, password, firstName, lastName, email]
+      "INSERT INTO public.profiles (username, password, first_name, last_name, email, job) VALUES ($1, $2, $3, $4, $5, $6)",
+      [username, password, firstName, lastName, email, job]
     );
 
     return res.status(200).json({
@@ -250,7 +251,7 @@ app.get("/profile", verifyToken, async (req, res) => {
   try {
     const { username } = req;
     const profile = await client.query(
-      "SELECT username, first_name, last_name, email FROM public.profiles WHERE username = $1",
+      "SELECT username, first_name, last_name, email, job FROM public.profiles WHERE username = $1",
       [username]
     );
 
