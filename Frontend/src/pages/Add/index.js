@@ -56,6 +56,8 @@ const AddTransaction = () => {
   const [isBudgetSet, setIsBudgetSet] = useState(false);
 
   const [transactionLoaded, setTransactionLoaded] = useState(false);
+  const [incomeCategories, setIncomeCategories] = useState([]);
+
 
   useEffect(() => {
     const fetchBudget = async () => {
@@ -510,10 +512,35 @@ const AddTransaction = () => {
                       <MenuItem value="food">Food</MenuItem>
                       <MenuItem value="utilities">Utilities</MenuItem>
                       <MenuItem value="housing">Housing</MenuItem>
-                      <MenuItem value="transportation">
-                        Transportation
-                      </MenuItem>
+                      <MenuItem value="transportation">Transportation</MenuItem>
                       <MenuItem value="entertainment">Entertainment</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )}
+              {transactionType === "income" && (
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel id="transaction-category-label">
+                      Category
+                    </InputLabel>
+                    <Select
+                      labelId="transaction-category-label"
+                      id="transaction-category-select"
+                      value={transactionCategory}
+                      onChange={(e) => setTransactionCategory(e.target.value)}
+                    >
+                      {incomeCategories.map((category) => (
+                        <MenuItem key={category.id} value={category.name}>
+                          {category.name}
+                        </MenuItem>
+                      ))}
+                      <MenuItem value="salary">salary</MenuItem>
+                      <MenuItem value="freelance">freelance</MenuItem>
+                      <MenuItem value="investment">investment</MenuItem>
+                      <MenuItem value="business">business</MenuItem>
+                      <MenuItem value="gift/bonus">gift/bonus</MenuItem>
+                      <MenuItem value="donation">donation</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
