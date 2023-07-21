@@ -58,7 +58,6 @@ const AddTransaction = () => {
   const [transactionLoaded, setTransactionLoaded] = useState(false);
   const [incomeCategories, setIncomeCategories] = useState([]);
 
-
   useEffect(() => {
     const fetchBudget = async () => {
       try {
@@ -137,6 +136,7 @@ const AddTransaction = () => {
       const response = await axios.post("http://localhost:8000/add-income", {
         name: transactionName,
         amount: transactionValue,
+        category: transactionCategory,
         date_added: new Date().toLocaleDateString(),
         user_id: user_id,
       });
@@ -158,6 +158,7 @@ const AddTransaction = () => {
         name: transactionName,
         amount: transactionValue,
         date_added: new Date().toLocaleDateString(),
+        category: transactionCategory,
         user_id: user_id,
       });
       if (response.status === 201) {
@@ -305,16 +306,17 @@ const AddTransaction = () => {
   };
 
   const handleDeleteBudget = async () => {
+    let user_id = Cookies.get("user_id");
     if (budget.id) {
       try {
-        await axios.delete(`http://localhost:8000/del-budget`, {
+        await axios.post(`http://localhost:8000/del-budget`, {
           data: { user_id: user_id, id: budget.id },
         });
         setIsBudgetSet(false);
         setBudget({ amount: 0, id: null });
-        console.log('Budget deleted successfully');
+        console.log("Budget deleted successfully");
       } catch (error) {
-        console.error('Error deleting budget:', error);
+        console.error("Error deleting budget:", error);
       }
     }
   };
@@ -715,82 +717,92 @@ const AddTransaction = () => {
           </Box>
         </Fade>
       </Modal>
-      <Box display="flex" justifyContent="center" alignItems="center" mb={3} mt={2}>
-  {!isBudgetSet ? (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={handleBudgetDialogOpen}
-    >
-      Set Budget
-    </Button>
-  ) : (
-    <Box>
-      <Typography variant="h6" color="white" mb={1}>
-        Budget: ${budget.amount}
-      </Typography>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleDeleteBudget}
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        mb={3}
+        mt={2}
       >
-        Delete Budget
-      </Button>
-    </Box>
-  )}
-</Box>
-
-<Modal
-  open={budgetDialogOpen}
-  onClose={handleBudgetDialogClose}
-  closeAfterTransition
-  BackdropComponent={Backdrop}
-  BackdropProps={{
-    timeout: 500,
-  }}
->
-  <Fade in={budgetDialogOpen}>
-    <Box
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        bgcolor: "white",
-        border: "2px solid #000",
-        boxShadow: 24,
-        p: 4,
-        maxWidth: "500px",
-        width: "100%",
-      }}
-    >
-      <Typography variant="h5" color="primary" align="center" mb={3}>
-        Set Budget
-      </Typography>
-      <FormControl fullWidth error={budgetError}>
-        <InputLabel htmlFor="budget-amount-input">Budget Amount</InputLabel>
-        <Input
-          id="budget-amount-input"
-          type="number"
-          value={budget.amount}
-          onChange={handleBudgetInputChange}
-        />
-        {budgetError && (
-          <FormHelperText>Amount must be a positive number</FormHelperText>
+        {!isBudgetSet ? (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBudgetDialogOpen}
+          >
+            Set Budget
+          </Button>
+        ) : (
+          <Box>
+            <Typography variant="h6" color="white" mb={1}>
+              Budget: ${budget.amount}
+            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleDeleteBudget}
+            >
+              Delete Budget
+            </Button>
+          </Box>
         )}
-      </FormControl>
-      <Box mt={3} display="flex" justifyContent="center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSetBudget}
-        >
-          Set Budget
-        </Button>
       </Box>
-    </Box>
-  </Fade>
-</Modal>
+
+      <Modal
+        open={budgetDialogOpen}
+        onClose={handleBudgetDialogClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={budgetDialogOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "white",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              maxWidth: "500px",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h5" color="primary" align="center" mb={3}>
+              Set Budget
+            </Typography>
+            <FormControl fullWidth error={budgetError}>
+              <InputLabel htmlFor="budget-amount-input">
+                Budget Amount
+              </InputLabel>
+              <Input
+                id="budget-amount-input"
+                type="number"
+                value={budget.amount}
+                onChange={handleBudgetInputChange}
+              />
+              {budgetError && (
+                <FormHelperText>
+                  Amount must be a positive number
+                </FormHelperText>
+              )}
+            </FormControl>
+            <Box mt={3} display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSetBudget}
+              >
+                Set Budget
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
       <Box
         display="flex"
         justifyContent="center"
@@ -832,11 +844,11 @@ const AddTransaction = () => {
       </Box>
       <TableContainer
         component={Paper}
-        sx={{ marginTop: "30px", maxHeight: 400, overflow: "auto"}}
+        sx={{ marginTop: "30px", maxHeight: 400, overflow: "auto" }}
       >
         <Table>
           <TableHead>
-          <TableRow>
+            <TableRow>
               <TableCell colSpan={5} align="center">
                 <Typography variant="h6" color="primary">
                   All Transactions History
@@ -878,7 +890,10 @@ const AddTransaction = () => {
                       variant="contained"
                       color="secondary"
                       onClick={() =>
-                        handleDeleteTransaction(transaction.id, transaction.type)
+                        handleDeleteTransaction(
+                          transaction.id,
+                          transaction.type
+                        )
                       }
                     >
                       Delete
@@ -889,7 +904,7 @@ const AddTransaction = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Footer/>
+      <Footer />
     </Box>
   );
 };
