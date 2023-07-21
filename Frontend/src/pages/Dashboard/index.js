@@ -24,17 +24,82 @@ import Cookies from "js-cookie";
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const [cashFlow, setCashFlow] = useState(0);
-  const [currentMonthName, setCurrentMonthName] = useState("");
-  const [currentMonthNumber, setCurrentMonthNumber] = useState(0);
-
-  const [allIncomes, setAllIncomes] = useState([]);
-  const [allExpenses, setAllExpenses] = useState([]);
-
   const [income, setIncome] = useState(0);
-  const [budget, setBudget] = useState(0);
   const [expenses, setExpenses] = useState(0);
+  const [currentMonth, setCurrentMonth] = useState("");
+  const [budget, setBudget] = useState(0);
 
-  //const [ allIncomes, setAllIncomes ] = useState([]);
+  const getCashFlow = async () => {
+    try {
+      const userId = Cookies.get("user_id");
+
+      const incomeRes = await axios.get(
+        `http://localhost:8000/incomes/${userId}`
+      );
+
+      const expenseRes = await axios.get(
+        `http://localhost:8000/expenses/${userId}`
+      );
+
+      let incomes = incomeRes.data;
+      let expenses = expenseRes.data;
+
+      // Calculate the total income
+      let totalIncome = incomes.reduce(
+        (sum, income) => sum + parseFloat(income.amount),
+        0
+      );
+
+      // Calculate the total expenses
+      let totalExpense = expenses.reduce(
+        (sum, expense) => sum + parseFloat(expense.amount),
+        0
+      );
+
+      setCashFlow(totalIncome - totalExpense);
+      setIncome(totalIncome);
+      setExpenses(totalExpense);
+    } catch (error) {
+      console.error("Failed to retrieve cashFlow:", error);
+    }
+  };
+
+  const getBalance = async () => {
+    try {
+      const userId = Cookies.get("user_id");
+
+      const balanceRes = await axios.get(
+        `http://localhost:8000/balance/${userId}`
+      );
+      let balance = balanceRes.data[0];
+      setBalance(balance ? balance.amount : 0);
+    } catch (error) {
+      console.error("Failed to retrieve balance:", error);
+    }
+  };
+
+  const getBudget = async () => {
+    try {
+      const userId = Cookies.get("user_id");
+
+      const res = await axios.get(
+        `http://localhost:8000/budget/${userId}`
+      );
+      if (res.status == 200) {
+        if (res.data.length > 0) {
+          setBudget(res.data[0].amount)
+        }
+      }
+      
+    } catch (error) {
+      console.error("Failed to retrieve budget:", error);
+    }
+  };
+
+  const loadData = async () => {
+    await getCashFlow();
+    await getBalance();
+  };
 
   //gets the total income/expense of the target month given in number
   const getMonthTotal = (target_month, items) => {
@@ -55,84 +120,11 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-
-    const getExpenses = async () => {
-      try {
-        const userId = Cookies.get("user_id");
-  
-        const result = await axios.get(
-          `http://localhost:8000/expenses/${userId}`
-        );
-        if (result.status == 200) {
-          setAllExpenses(result.data);
-        }
-      } catch (error) {
-        console.error("Failed to retrieve expenses:", error);
-      }
-    } 
-  
-    const getIncomes = async () => {
-      try {
-        const userId = Cookies.get("user_id");
-  
-        const result = await axios.get(
-          `http://localhost:8000/incomes/${userId}`
-        );
-        if (result.status == 200) {
-          setAllIncomes(result.data);
-        }
-        console.log("allIncomes:", allIncomes);
-        console.log("result data:", result.data);
-      } catch (error) {
-        console.error("Failed to retrieve incomes:", error);
-      }
-    }
-
-    const getBalance = async () => {
-      try {
-        const userId = Cookies.get("user_id");
-  
-        const balanceRes = await axios.get(
-          `http://localhost:8000/balance/${userId}`
-        );
-        let balance = balanceRes.data[0];
-        setBalance(balance ? balance.amount : 0);
-      } catch (error) {
-        console.error("Failed to retrieve balance:", error);
-      }
-    };
-  
-    const getBudget = async () => {
-      try {
-        const userId = Cookies.get("user_id");
-  
-        const res = await axios.get(
-          `http://localhost:8000/budget/${userId}`
-        );
-        if (res.status == 200) {
-          if (res.data.length > 0) {
-            setBudget(res.data[0].amount)
-          }
-        }
-        
-      } catch (error) {
-        console.error("Failed to retrieve budget:", error);
-      }
-    };
-    
-    getIncomes();
-    getExpenses();
-    getBudget();
-    getBalance();
-
-
-    setIncome(2);
-    setExpenses(2);
-    setCashFlow(2);
-    
-    setupCurrentMonth();
+    loadData();
+    const today = new Date();
+    const month = today.toLocaleString("default", { month: "long" });
+    setCurrentMonth(month);
   }, []);
-
 
 
 
@@ -328,7 +320,7 @@ const Dashboard = () => {
                     ${income}
                   </Typography>
                   <Typography variant="body2" color="#132c4a" mt={1}>
-                    {currentMonthName} Income
+                    {currentMonth} Income
                   </Typography>
                 </Box>
                 <Box>
@@ -336,7 +328,7 @@ const Dashboard = () => {
                     ${expenses}
                   </Typography>
                   <Typography variant="body2" color="#132c4a" mt={1}>
-                    {currentMonthName} Expenses
+                    {currentMonth} Expenses
                   </Typography>
                 </Box>
               </Box>
