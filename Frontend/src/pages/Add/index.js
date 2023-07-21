@@ -664,7 +664,7 @@ const AddTransaction = () => {
                         <TableRow key={index}>
                           <TableCell>{transaction.name}</TableCell>
                           <TableCell>${transaction.value}</TableCell>
-                          <TableCell>{transaction.date}</TableCell>
+                          <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
                           {transaction.type === "expense" && (
                             <TableCell>{transaction.category}</TableCell>
                           )}
@@ -757,54 +757,56 @@ const AddTransaction = () => {
           </Box>
         </Box>
 
-
         <Typography variant="h6" color="white">
-            All Transactions History
-          </Typography>
+          All Transactions Hisotory
+        </Typography>
         <TableContainer component={Paper} sx={{ marginTop: "30px", maxHeight: 400 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Typography variant="h6">Name</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Value</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Date</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Category</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Action</Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map((transaction, index) => (
-                <TableRow key={index}>
-                  <TableCell>{transaction.name}</TableCell>
-                  <TableCell>${transaction.value}</TableCell>
-                  <TableCell>{transaction.date}</TableCell>
-                  <TableCell>{transaction.category}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() =>
-                        handleDeleteTransaction(transaction.id, transaction.type)
-                      }
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>
+          <Typography variant="h6">Name</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Value</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Date</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Category</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Action</Typography>
+        </TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {transactions
+        .slice() // create a copy of the array
+        .reverse() // reverse the order
+        .map((transaction, index) => (
+          <TableRow key={index}>
+            <TableCell>{transaction.name}</TableCell>
+            <TableCell>${transaction.value}</TableCell>
+            <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+            <TableCell>{transaction.category}</TableCell>
+            <TableCell>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() =>
+                  handleDeleteTransaction(transaction.id, transaction.type)
+                }
+              >
+                Delete
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+    </TableBody>
+  </Table>
+</TableContainer>
       </Box>
 
       <Modal
