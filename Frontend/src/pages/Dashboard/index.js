@@ -149,7 +149,6 @@ const Dashboard = () => {
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
 
       {
-        //Page Title
       }
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
