@@ -35,6 +35,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { Link as RouterLink } from "react-router-dom";
 import Footer from "../../components/Footer";
+import { Input } from "@mui/material";
 
 const AddTransaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -301,12 +302,19 @@ const AddTransaction = () => {
     setBudgetDialogOpen(false);
   };
 
-  const handleDeleteBudget = () => {
+  const handleDeleteBudget = async () => {
     if (budget.id) {
-      axios.delete(`http://localhost:8000/budget/${budget.id}`);
+      try {
+        await axios.delete(`http://localhost:8000/del-budget`, {
+          data: { user_id: user_id, id: budget.id },
+        });
+        setIsBudgetSet(false);
+        setBudget({ amount: 0, id: null });
+        console.log('Budget deleted successfully');
+      } catch (error) {
+        console.error('Error deleting budget:', error);
+      }
     }
-    setIsBudgetSet(false);
-    setBudget({ amount: 0, id: null });
   };
 
   return (
@@ -680,38 +688,82 @@ const AddTransaction = () => {
           </Box>
         </Fade>
       </Modal>
-
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        mb={3}
-        mt={2}
+      <Box display="flex" justifyContent="center" alignItems="center" mb={3} mt={2}>
+  {!isBudgetSet ? (
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={handleBudgetDialogOpen}
+    >
+      Set Budget
+    </Button>
+  ) : (
+    <Box>
+      <Typography variant="h6" color="white" mb={1}>
+        Budget: ${budget.amount}
+      </Typography>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleDeleteBudget}
       >
-        {!isBudgetSet ? (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleBudgetDialogOpen}
-          >
-            Set Budget
-          </Button>
-        ) : (
-          <Box>
-            <Typography variant="h6" color="white" mb={1}>
-              Budget: ${budget.amount}
-            </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleDeleteBudget}
-            >
-              Delete Budget
-            </Button>
-          </Box>
-        )}
-      </Box>
+        Delete Budget
+      </Button>
+    </Box>
+  )}
+</Box>
 
+<Modal
+  open={budgetDialogOpen}
+  onClose={handleBudgetDialogClose}
+  closeAfterTransition
+  BackdropComponent={Backdrop}
+  BackdropProps={{
+    timeout: 500,
+  }}
+>
+  <Fade in={budgetDialogOpen}>
+    <Box
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        bgcolor: "white",
+        border: "2px solid #000",
+        boxShadow: 24,
+        p: 4,
+        maxWidth: "500px",
+        width: "100%",
+      }}
+    >
+      <Typography variant="h5" color="primary" align="center" mb={3}>
+        Set Budget
+      </Typography>
+      <FormControl fullWidth error={budgetError}>
+        <InputLabel htmlFor="budget-amount-input">Budget Amount</InputLabel>
+        <Input
+          id="budget-amount-input"
+          type="number"
+          value={budget.amount}
+          onChange={handleBudgetInputChange}
+        />
+        {budgetError && (
+          <FormHelperText>Amount must be a positive number</FormHelperText>
+        )}
+      </FormControl>
+      <Box mt={3} display="flex" justifyContent="center">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSetBudget}
+        >
+          Set Budget
+        </Button>
+      </Box>
+    </Box>
+  </Fade>
+</Modal>
       <Box
         display="flex"
         justifyContent="center"
@@ -757,7 +809,7 @@ const AddTransaction = () => {
       </Typography>
       <TableContainer
         component={Paper}
-        sx={{ marginTop: "30px", maxHeight: 400, overflow: "auto" }}
+        sx={{ marginTop: "30px", maxHeight: 400, overflow: "auto"}}
       >
         <Table>
           <TableHead>
