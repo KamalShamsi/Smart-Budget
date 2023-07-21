@@ -10,6 +10,7 @@ import {
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
+import Footer from "../../components/Footer";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState('');
@@ -110,6 +111,7 @@ const Profile = () => {
           </Paper>
         </Grid>
       </Grid>
+      <Footer/>
     </Box>
   );
 };

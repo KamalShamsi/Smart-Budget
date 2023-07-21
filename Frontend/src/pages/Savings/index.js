@@ -28,6 +28,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import Footer from "../../components/Footer";
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
@@ -261,6 +262,7 @@ const Savings = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Footer/>
     </Box>
   );
 };

@@ -34,6 +34,7 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Link as RouterLink } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 const AddTransaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -806,6 +807,7 @@ const AddTransaction = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Footer/>
     </Box>
   );
 };

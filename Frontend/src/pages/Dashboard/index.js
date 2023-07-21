@@ -21,6 +21,7 @@ import {
 } from "recharts";
 import Cookies from "js-cookie";
 import { Link as RouterLink } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
@@ -328,6 +329,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
+      <Footer/>
     </Box>
   );
 };
