@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Paper, Button, Link, Avatar } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Button,
+  Link,
+  Avatar,
+  TextField,
+} from '@mui/material';
 import {
   Home as HomeIcon,
   AddCircle as AddCircleIcon,
@@ -10,7 +19,7 @@ import {
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
-import Footer from "../../components/Footer";
+import Footer from '../../components/Footer';
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState('');
@@ -92,19 +101,64 @@ const Profile = () => {
         </Link>
       </Box>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} md={6} lg={5}>
+        <Grid item xs={12} md={6} lg={3}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box display="flex" flexDirection="column" alignItems="center">
-              <AccountCircleIcon fontSize="large" color="primary" sx={{ mb: 2 }} />
-              <Typography variant="h6" color="primary" sx={{ mb: 1 }}>
+              <Avatar sx={{ mb: 2 }}>
+                <AccountCircleIcon fontSize="large" color="primary" />
+              </Avatar>
+              <Typography variant="h6" color="primary" sx={{ mb: 3 }}>
                 {userProfile.username}
               </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                First Name: {userProfile.first_name}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                Last Name: {userProfile.last_name}
-              </Typography>
+
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                  First Name
+                </Typography>
+                <TextField
+                  value={userProfile.first_name}
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+              </Box>
+
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                  Last Name
+                </Typography>
+                <TextField
+                  value={userProfile.last_name}
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+              </Box>
+
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                  Email
+                </Typography>
+                <TextField
+                  value={userProfile.email}
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                  Occupation
+                </Typography>
+                <TextField
+                  value={userProfile.job}
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+              </Box>
+
               <Button
                 variant="contained"
                 startIcon={<ExitToAppIcon />}
@@ -117,7 +171,7 @@ const Profile = () => {
           </Paper>
         </Grid>
       </Grid>
-      <Footer/>
+      <Footer />
     </Box>
   );
 };
