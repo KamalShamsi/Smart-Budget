@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '14px',
     textAlign: 'center',
   },
+  phoneInput: {
+    size: '1000px',
+  }
 }));
 
 const RegisterForm = () => {
@@ -43,17 +46,23 @@ const RegisterForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [job, setJob] = useState('');
   const [passwordError, setPasswordError] = useState(false);
+  const [confirmError, setConfirmError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (
-      username.trim() === '' ||
-      password.trim() === '' ||
-      firstName.trim() === '' ||
-      lastName.trim() === '' ||
-      confirmPassword.trim() === ''
+      username.trim() == '' ||
+      password.trim() == '' ||
+      firstName.trim() == '' ||
+      lastName.trim() == '' ||
+      confirmPassword.trim() == '' ||
+      email.trim() == '' ||
+      job.trim() == ''
     ) {
       alert('Please fill in all fields.');
       return;
@@ -64,12 +73,25 @@ const RegisterForm = () => {
       return;
     }
 
+    if (confirmPassword !== password) {
+      setConfirmError(true);
+      return;
+    }
+
+
+    if (!email.includes('@') || !email.includes('.')) {
+      setEmailError(true);
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:8000/register', {
         username,
         password,
         firstName,
         lastName,
+        email,
+        job,
       });
 
       // Handle successful registration
@@ -133,6 +155,28 @@ const RegisterForm = () => {
         type="password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
+        error={confirmError}
+        helperText={
+          confirmError && 'Must match password.'
+        }
+      />
+      <TextField
+        className={classes.textField}
+        label="Email"
+        variant="outlined"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        error={emailError}
+        helperText={
+          emailError && 'Input a valid email (@ with domain name)'
+        }
+      />
+      <TextField
+        className={classes.textField}
+        label="Profession"
+        variant="outlined"
+        value={job}
+        onChange={(e) => setJob(e.target.value)}
       />
       <Button
         type="submit"
