@@ -31,6 +31,12 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = () => {
+    Cookies.remove('user_id');
+    Cookies.remove('tok');
+    window.location.href = '/login';
+  };
+
   useEffect(() => {
     getUserProfile();
   }, []);
@@ -103,7 +109,7 @@ const Profile = () => {
                 variant="contained"
                 startIcon={<ExitToAppIcon />}
                 sx={{ mt: 2, width: '100%' }}
-                href="/login"
+                onClick={handleLogout}
               >
                 Logout
               </Button>
