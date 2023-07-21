@@ -24,91 +24,21 @@ import Cookies from "js-cookie";
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const [cashFlow, setCashFlow] = useState(0);
-  const [income, setIncome] = useState(0);
   const [budget, setBudget] = useState(0);
+  const [currentMonthName, setCurrentMonthName] = useState("");
+  const [currentMonthNumber, setCurrentMonthNumber] = useState(0);
+
+  const [allIncomes, setAllIncomes] = useState([]);
+  const [allExpenses, setAllExpenses] = useState([]);
+
+  const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
-  const [currentMonth, setCurrentMonth] = useState("");
 
-  const [ allIncome, setAllIncome ] = useState([])
-  const [ allExpense, setAllExpense ] = useState([])
-
-  //getters
-  const getCashFlow = async () => {
-    try {
-      const userId = Cookies.get("user_id");
-
-      const incomeRes = await axios.get(
-        `http://localhost:8000/incomes/${userId}`
-      );
-
-      const expenseRes = await axios.get(
-        `http://localhost:8000/expenses/${userId}`
-      );
-
-      let incomes = incomeRes.data;
-      let expenses = expenseRes.data;
-
-      setAllIncome(incomeRes.data)
-      setAllExpense(expenseRes.data)
-
-      console.log("incomes:",allIncome)
-      console.log("expenses:",allExpense)
-
-      // Calculate the total income
-      let totalIncome = incomes.reduce(
-        (sum, income) => sum + parseFloat(income.amount),
-        0
-      );
-
-      // Calculate the total expenses
-      let totalExpense = expenses.reduce(
-        (sum, expense) => sum + parseFloat(expense.amount),
-        0
-      );
-      
-      setCashFlow(totalIncome - totalExpense);
-      setIncome(totalIncome);
-      setExpenses(totalExpense);
-    } catch (error) {
-      console.error("Failed to retrieve cashFlow:", error);
-    }
-  };
-
-  const getBalance = async () => {
-    try {
-      const userId = Cookies.get("user_id");
-
-      const balanceRes = await axios.get(
-        `http://localhost:8000/balance/${userId}`
-      );
-      let balance = balanceRes.data[0];
-      setBalance(balance ? balance.amount : 0);
-    } catch (error) {
-      console.error("Failed to retrieve balance:", error);
-    }
-  };
-
-  const getBudget = async () => {
-    try {
-      const userId = Cookies.get("user_id");
-
-      const res = await axios.get(
-        `http://localhost:8000/budget/${userId}`
-      );
-      if (res.status == 200) {
-        if (res.data.length > 0) {
-          setBudget(res.data[0].amount)
-        }
-      }
-      
-    } catch (error) {
-      console.error("Failed to retrieve budget:", error);
-    }
-  };
+  //const [ allIncomes, setAllIncomes ] = useState([]);
 
   //gets the total income/expense of the target month given in number
-  const getMonthTotalExpense = (target_month) => {
-    const filteredItems = allExpense.filter(
+  const getMonthTotal = (target_month, items) => {
+    const filteredItems = items.filter(
       (i) =>
       new Date(i.date_added).getMonth() + 1 === target_month
     );
@@ -116,27 +46,91 @@ const Dashboard = () => {
     return total;
   }
 
-  const getMonthTotalIncome = (target_month) => {
-    const filteredItems = allIncome.filter(
-      (i) =>
-      new Date(i.date_added).getMonth() + 1 === target_month
-    );
-    const total = filteredItems.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-    return total;
-  }
-
-  const loadData = async () => {
-    await getBudget();
-    await getCashFlow();
-    await getBalance();
-  };
-
-  useEffect(() => {
-    loadData();
+  const setupCurrentMonth = () => {
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
     const currentMonth = today.getMonth() + 1;
-    setCurrentMonth(month);
+    setCurrentMonthNumber(currentMonth);
+    setCurrentMonthName(month);
+  }
+
+  useEffect(() => {
+
+    const getExpenses = async () => {
+      try {
+        const userId = Cookies.get("user_id");
+  
+        const result = await axios.get(
+          `http://localhost:8000/expenses/${userId}`
+        );
+        if (result.status == 200) {
+          setAllExpenses(result.data);
+        }
+      } catch (error) {
+        console.error("Failed to retrieve expenses:", error);
+      }
+    } 
+  
+    const getIncomes = async () => {
+      try {
+        const userId = Cookies.get("user_id");
+  
+        const result = await axios.get(
+          `http://localhost:8000/incomes/${userId}`
+        );
+        if (result.status == 200) {
+          setAllIncomes(result.data);
+        }
+        console.log("allIncomes:", allIncomes);
+        console.log("result data:", result.data);
+      } catch (error) {
+        console.error("Failed to retrieve incomes:", error);
+      }
+    }
+
+    const getBalance = async () => {
+      try {
+        const userId = Cookies.get("user_id");
+  
+        const balanceRes = await axios.get(
+          `http://localhost:8000/balance/${userId}`
+        );
+        let balance = balanceRes.data[0];
+        setBalance(balance ? balance.amount : 0);
+      } catch (error) {
+        console.error("Failed to retrieve balance:", error);
+      }
+    };
+  
+    const getBudget = async () => {
+      try {
+        const userId = Cookies.get("user_id");
+  
+        const res = await axios.get(
+          `http://localhost:8000/budget/${userId}`
+        );
+        if (res.status == 200) {
+          if (res.data.length > 0) {
+            setBudget(res.data[0].amount)
+          }
+        }
+        
+      } catch (error) {
+        console.error("Failed to retrieve budget:", error);
+      }
+    };
+    
+    getIncomes();
+    getExpenses();
+    getBudget();
+    getBalance();
+
+
+    setIncome(2);
+    setExpenses(2);
+    setCashFlow(2);
+    
+    setupCurrentMonth();
   }, []);
 
 
@@ -163,6 +157,10 @@ const Dashboard = () => {
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
+
+      {
+        //Page Title
+      }
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
           Dashboard
@@ -176,6 +174,7 @@ const Dashboard = () => {
           borderRadius={5}
         />
       </Box>
+
       <Grid container spacing={3} justifyContent="center">
         {
           // The start of the navigation bar
@@ -327,7 +326,7 @@ const Dashboard = () => {
                     ${income}
                   </Typography>
                   <Typography variant="body2" color="#132c4a" mt={1}>
-                    {currentMonth} Income
+                    {currentMonthName} Income
                   </Typography>
                 </Box>
                 <Box>
@@ -335,7 +334,7 @@ const Dashboard = () => {
                     ${expenses}
                   </Typography>
                   <Typography variant="body2" color="#132c4a" mt={1}>
-                    {currentMonth} Expenses
+                    {currentMonthName} Expenses
                   </Typography>
                 </Box>
               </Box>
