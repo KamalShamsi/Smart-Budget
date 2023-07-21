@@ -803,16 +803,19 @@ const AddTransaction = () => {
           </Typography>
         </Box>
       </Box>
-
-      <Typography variant="h6" color="white">
-        All Transactions History
-      </Typography>
       <TableContainer
         component={Paper}
         sx={{ marginTop: "30px", maxHeight: 400, overflow: "auto"}}
       >
         <Table>
           <TableHead>
+          <TableRow>
+              <TableCell colSpan={5} align="center">
+                <Typography variant="h6" color="primary">
+                  All Transactions History
+                </Typography>
+              </TableCell>
+            </TableRow>
             <TableRow>
               <TableCell>
                 <Typography variant="h6">Name</Typography>
