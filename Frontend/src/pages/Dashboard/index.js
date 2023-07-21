@@ -28,7 +28,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
   const [budget, setBudget] = useState(0);
-
+  
   const getCashFlow = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -45,16 +45,12 @@ const Dashboard = () => {
       let expenses = expenseRes.data;
 
       // Calculate the total income
-      let totalIncome = incomes.reduce(
-        (sum, income) => sum + parseFloat(income.amount),
-        0
-      );
+      
+
+      let totalIncome = getMonthTotal(7, incomes);
 
       // Calculate the total expenses
-      let totalExpense = expenses.reduce(
-        (sum, expense) => sum + parseFloat(expense.amount),
-        0
-      );
+      let totalExpense = getMonthTotal(7, expenses);
 
       setCashFlow(totalIncome - totalExpense);
       setIncome(totalIncome);
@@ -63,6 +59,7 @@ const Dashboard = () => {
       console.error("Failed to retrieve cashFlow:", error);
     }
   };
+  
 
   const getBalance = async () => {
     try {
@@ -97,8 +94,9 @@ const Dashboard = () => {
   };
 
   const loadData = async () => {
-    await getCashFlow();
+    getCashFlow();
     await getBalance();
+    await getBudget();
   };
 
   //gets the total income/expense of the target month given in number
@@ -111,23 +109,12 @@ const Dashboard = () => {
     return total;
   }
 
-  const setupCurrentMonth = () => {
-    const today = new Date();
-    const month = today.toLocaleString("default", { month: "long" });
-    const currentMonth = today.getMonth() + 1;
-    setCurrentMonthNumber(currentMonth);
-    setCurrentMonthName(month);
-  }
-
   useEffect(() => {
-    loadData();
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
     setCurrentMonth(month);
+    loadData();
   }, []);
-
-
-
 
   // Sample data for demonstration
   const monthlyStatsData = [
