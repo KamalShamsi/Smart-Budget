@@ -28,8 +28,12 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
   const [budget, setBudget] = useState(0);
-  
-  const getCashFlow = async () => {
+
+  const [monthlyStatsData, setMonthlyStatsData] = useState([]);
+
+  let monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  const getData = async () => {
     try {
       const userId = Cookies.get("user_id");
 
@@ -43,14 +47,22 @@ const Dashboard = () => {
 
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
+      var temp = [];
+      for (let i = 1; i < 13; i++) {
+        let monthIncome = getMonthTotal(i, incomes);
+        let monthExpense = getMonthTotal(i, expenses);
+        temp.push({month:monthNames[i-1], income:monthIncome, expenses:monthExpense});
+      }
+      setMonthlyStatsData(temp);
 
-      // Calculate the total income
+      const currentDate = new Date();
+      const currentMonthNumber = currentDate.getMonth() + 1;
       
-
-      let totalIncome = getMonthTotal(7, incomes);
+      // Calculate the total income
+      let totalIncome = getMonthTotal(currentMonthNumber, incomes);
 
       // Calculate the total expenses
-      let totalExpense = getMonthTotal(7, expenses);
+      let totalExpense = getMonthTotal(currentMonthNumber, expenses);
 
       setCashFlow(totalIncome - totalExpense);
       setIncome(totalIncome);
@@ -59,7 +71,6 @@ const Dashboard = () => {
       console.error("Failed to retrieve cashFlow:", error);
     }
   };
-  
 
   const getBalance = async () => {
     try {
@@ -113,10 +124,11 @@ const Dashboard = () => {
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
     setCurrentMonth(month);
-    loadData();
+    getData();
   }, []);
 
   // Sample data for demonstration
+  /*
   const monthlyStatsData = [
     { month: "Jan", income: 5000, expenses: 3500 },
     { month: "Feb", income: 5500, expenses: 4000 },
@@ -125,6 +137,7 @@ const Dashboard = () => {
     { month: "May", income: 7000, expenses: 3900 },
     { month: "Jun", income: 7500, expenses: 4300 },
   ];
+  */
 
   const pieChartData = [
     { category: "Food", amount: 250 },
