@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Typography, Grid, Paper, Link } from "@mui/material";
+import { Box, Typography, Grid, Paper, Link, Button } from "@mui/material";
 import {
   Home as HomeIcon,
   AddCircle as AddCircleIcon,
@@ -20,6 +20,7 @@ import {
   Cell,
 } from "recharts";
 import Cookies from "js-cookie";
+import { Link as RouterLink } from "react-router-dom";
 
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
@@ -37,13 +38,9 @@ const Dashboard = () => {
     try {
       const userId = Cookies.get("user_id");
 
-      const incomeRes = await axios.get(
-        `http://localhost:8000/incomes/${userId}`
-      );
+      const incomeRes = await axios.get(`http://localhost:8000/incomes/${userId}`);
 
-      const expenseRes = await axios.get(
-        `http://localhost:8000/expenses/${userId}`
-      );
+      const expenseRes = await axios.get(`http://localhost:8000/expenses/${userId}`);
 
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
@@ -76,9 +73,7 @@ const Dashboard = () => {
     try {
       const userId = Cookies.get("user_id");
 
-      const balanceRes = await axios.get(
-        `http://localhost:8000/balance/${userId}`
-      );
+      const balanceRes = await axios.get(`http://localhost:8000/balance/${userId}`);
       let balance = balanceRes.data[0];
       setBalance(balance ? balance.amount : 0);
     } catch (error) {
@@ -159,117 +154,51 @@ const Dashboard = () => {
         <Typography variant="h4" color="white">
           Dashboard
         </Typography>
-        <Box
-          bgcolor="#1565c0"
-          height={2}
-          width={150}
-          mx="auto"
-          my={2}
-          borderRadius={5}
-        />
+        <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
       </Box>
-
+      <Box display="flex" justifyContent="center" mb={3}>
+        <Link component={RouterLink} to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<HomeIcon />}
+            sx={{ marginRight: '10px', height: 60, width: 130, fontSize: '1.2rem', bgcolor: '#FFC107' }}
+          >
+            Home
+          </Button>
+        </Link>
+        <Link component={RouterLink} to="/add" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddCircleIcon />}
+            sx={{ marginRight: '10px', height: 60, width: 200, fontSize: '1.2rem', bgcolor: '#03A9F4 ' }}
+          >
+            Management
+          </Button>
+        </Link>
+        <Link component={RouterLink} to="/savings" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<MonetizationOnIcon />}
+            sx={{ marginRight: '10px', height: 60, width: 130, fontSize: '1.2rem', bgcolor: '#FF9800' }}
+          >
+            Savings
+          </Button>
+        </Link>
+        <Link component={RouterLink} to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AccountCircleIcon />}
+            sx={{ fontSize: '1.2rem', height: 60, width: 130, bgcolor: '#4CAF50' }}
+          >
+            Profile
+          </Button>
+        </Link>
+      </Box>
       <Grid container spacing={3} justifyContent="center">
-        {
-          // The start of the navigation bar
-        }
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/dashboard" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: "#1976d2",
-                  "&:hover": {
-                    bgcolor: "#1565c0",
-                  },
-                }}
-              >
-                <HomeIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Home
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/add" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: "#0d47a1",
-                  "&:hover": {
-                    bgcolor: "#0a3b8d",
-                  },
-                }}
-              >
-                <AddCircleIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Money Management
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/savings" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: "#1b5e20",
-                  "&:hover": {
-                    bgcolor: "#145214",
-                  },
-                }}
-              >
-                <MonetizationOnIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Savings
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/profile" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: "#ff6f00",
-                  "&:hover": {
-                    bgcolor: "#e65100",
-                  },
-                }}
-              >
-                <AccountCircleIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Profile
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        
-        {
-          //balance card start
-        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -285,10 +214,6 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-
-        {
-          //monthly budget card
-        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -335,10 +260,6 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-
-        {
-          //cashflow card
-        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -354,10 +275,6 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-
-        {
-          //monthly income & expenses graph
-        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -370,26 +287,12 @@ const Dashboard = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend verticalAlign="top" height={36} />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="#8884d8"
-                  name="Income"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="#82ca9d"
-                  name="Expenses"
-                />
+                <Line type="monotone" dataKey="income" stroke="#8884d8" name="Income" />
+                <Line type="monotone" dataKey="expenses" stroke="#82ca9d" name="Expenses" />
               </LineChart>
             </Box>
           </Paper>
         </Grid>
-
-        {
-          //expenses categories breakdown
-        }
         <Grid item xs={8} sm={6} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -424,7 +327,6 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-
       </Grid>
     </Box>
   );

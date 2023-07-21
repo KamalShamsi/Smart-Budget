@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState('');
@@ -41,99 +42,49 @@ const Profile = () => {
         </Typography>
         <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
       </Box>
+      <Box display="flex" justifyContent="center" mb={3}>
+        <Link component={RouterLink} to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<HomeIcon />}
+            sx={{ marginRight: '10px', height: 60, width: 130, fontSize: '1.2rem', bgcolor: '#FFC107' }}
+          >
+            Home
+          </Button>
+        </Link>
+        <Link component={RouterLink} to="/add" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddCircleIcon />}
+            sx={{ marginRight: '10px', height: 60, width: 200, fontSize: '1.2rem', bgcolor: '#03A9F4 ' }}
+          >
+            Management
+          </Button>
+        </Link>
+        <Link component={RouterLink} to="/savings" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<MonetizationOnIcon />}
+            sx={{ marginRight: '10px', height: 60, width: 130, fontSize: '1.2rem', bgcolor: '#FF9800' }}
+          >
+            Savings
+          </Button>
+        </Link>
+        <Link component={RouterLink} to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AccountCircleIcon />}
+            sx={{ fontSize: '1.2rem', height: 60, width: 130, bgcolor: '#4CAF50' }}
+          >
+            Profile
+          </Button>
+        </Link>
+      </Box>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/dashboard" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#1976d2',
-                  '&:hover': {
-                    bgcolor: '#1565c0',
-                  },
-                }}
-              >
-                <HomeIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Home
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/add" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#0d47a1',
-                  '&:hover': {
-                    bgcolor: '#0a3b8d',
-                  },
-                }}
-              >
-                <AddCircleIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Money Management
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/savings" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#1b5e20',
-                  '&:hover': {
-                    bgcolor: '#145214',
-                  },
-                }}
-              >
-                <MonetizationOnIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Savings
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Link href="/profile" color="inherit" underline="none">
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                transition="background-color 0.3s ease-in-out"
-                sx={{
-                  bgcolor: '#ff6f00',
-                  '&:hover': {
-                    bgcolor: '#e65100',
-                  },
-                }}
-              >
-                <AccountCircleIcon fontSize="large" color="white" />
-                <Typography variant="body1" color="white" mt={1}>
-                  Profile
-                </Typography>
-              </Box>
-            </Link>
-          </Paper>
-        </Grid>
         <Grid item xs={12} md={6} lg={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box display="flex" flexDirection="column" alignItems="center">
