@@ -42,9 +42,8 @@ const AddTransaction = () => {
   const [transactionCategory, setTransactionCategory] = useState("food");
   const [transactionName, setTransactionName] = useState("");
   const [transactionValue, setTransactionValue] = useState("");
-  const [selectedTransactionType, setSelectedTransactionType] = useState(
-    "income"
-  );
+  const [selectedTransactionType, setSelectedTransactionType] =
+    useState("income");
   const [budget, setBudget] = useState({ amount: 0, id: null });
   const [budgetDialogOpen, setBudgetDialogOpen] = useState(false);
   const [budgetError, setBudgetError] = useState(false);
@@ -102,7 +101,7 @@ const AddTransaction = () => {
             name: transaction.name,
             value: transaction.amount,
             type: transaction.type,
-            date: new Date(transaction.date_added).toLocaleDateString(),
+            date: transaction.date_added,
             category: transaction.category,
             id: transaction.id,
           }));
@@ -130,15 +129,12 @@ const AddTransaction = () => {
   const handleAddIncome = async () => {
     try {
       let user_id = Cookies.get("user_id");
-      const response = await axios.post(
-        "http://localhost:8000/add-income",
-        {
-          name: transactionName,
-          amount: transactionValue,
-          date_added: new Date().toLocaleDateString(),
-          user_id: user_id,
-        }
-      );
+      const response = await axios.post("http://localhost:8000/add-income", {
+        name: transactionName,
+        amount: transactionValue,
+        date_added: new Date().toLocaleDateString(),
+        user_id: user_id,
+      });
       if (response.status === 201) {
         console.log("income success:", response.data);
         setTransactionLoaded(false);
@@ -153,15 +149,12 @@ const AddTransaction = () => {
   const handleAddExpense = async () => {
     try {
       let user_id = Cookies.get("user_id");
-      const response = await axios.post(
-        "http://localhost:8000/add-expense",
-        {
-          name: transactionName,
-          amount: transactionValue,
-          date_added: new Date().toLocaleDateString(),
-          user_id: user_id,
-        }
-      );
+      const response = await axios.post("http://localhost:8000/add-expense", {
+        name: transactionName,
+        amount: transactionValue,
+        date_added: new Date().toLocaleDateString(),
+        user_id: user_id,
+      });
       if (response.status === 201) {
         console.log("expense success:", response.data);
         setTransactionLoaded(false);
@@ -308,8 +301,8 @@ const AddTransaction = () => {
   };
 
   const sortTransactionsByDate = () => {
-    const sortedTransactions = [...transactions].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
+    const sortedTransactions = [...transactions].sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
     );
     setTransactions(sortedTransactions);
   };
@@ -584,15 +577,17 @@ const AddTransaction = () => {
                 p: 4,
                 maxWidth: "800px",
                 width: "100%",
-                maxHeight: "600px",
               }}
             >
               <Typography variant="h5" color="primary" align="center" mb={3}>
                 View All{" "}
                 {selectedTransactionType === "income" ? "Incomes" : "Expenses"}
               </Typography>
-              <TableContainer component={Paper} sx={{ maxHeight: "400px" }}>
-                <Table stickyHeader>
+              <TableContainer
+              component={Paper}
+              sx={{ maxHeight: 400, overflow: "auto" }}
+            >
+                <Table>
                   <TableHead>
                     <TableRow>
                       <TableCell>
@@ -669,7 +664,7 @@ const AddTransaction = () => {
                         <TableRow key={index}>
                           <TableCell>{transaction.name}</TableCell>
                           <TableCell>${transaction.value}</TableCell>
-                          <TableCell>{transaction.date}</TableCell>
+                          <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
                           {transaction.type === "expense" && (
                             <TableCell>{transaction.category}</TableCell>
                           )}
@@ -744,6 +739,7 @@ const AddTransaction = () => {
               {income}
             </Typography>
           </Box>
+          
           <Box
             bgcolor="#e53935"
             p={2}
@@ -761,54 +757,110 @@ const AddTransaction = () => {
           </Box>
         </Box>
 
+        <Typography variant="h6" color="white">
+          All Transactions Hisotory
+        </Typography>
         <TableContainer component={Paper} sx={{ marginTop: "30px", maxHeight: 400 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Typography variant="h6">Name</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Value</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Date</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Category</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Action</Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map((transaction, index) => (
-                <TableRow key={index}>
-                  <TableCell>{transaction.name}</TableCell>
-                  <TableCell>${transaction.value}</TableCell>
-                  <TableCell>{transaction.date}</TableCell>
-                  <TableCell>{transaction.category}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() =>
-                        handleDeleteTransaction(
-                          transaction.id,
-                          transaction.type
-                        )
-                      }
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>
+          <Typography variant="h6">Name</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Value</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Date</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Category</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="h6">Action</Typography>
+        </TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {transactions
+        .slice() // create a copy of the array
+        .reverse() // reverse the order
+        .map((transaction, index) => (
+          <TableRow key={index}>
+            <TableCell>{transaction.name}</TableCell>
+            <TableCell>${transaction.value}</TableCell>
+            <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+            <TableCell>{transaction.category}</TableCell>
+            <TableCell>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() =>
+                  handleDeleteTransaction(transaction.id, transaction.type)
+                }
+              >
+                Delete
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+    </TableBody>
+  </Table>
+</TableContainer>
       </Box>
+
+      <Modal
+        open={budgetDialogOpen}
+        onClose={handleBudgetDialogClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={budgetDialogOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "white",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              maxWidth: "500px",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h5" color="primary" align="center" mb={3}>
+              Set Budget
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Amount"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  onChange={handleBudgetInputChange}
+                  error={budgetError}
+                  helperText={budgetError && "Budget amount must be positive"}
+                />
+              </Grid>
+            </Grid>
+            <Box mt={3} display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSetBudget}
+              >
+                Set Budget
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 };
