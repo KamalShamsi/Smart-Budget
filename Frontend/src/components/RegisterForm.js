@@ -47,7 +47,6 @@ const RegisterForm = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('')
   const [job, setJob] = useState('');
-  const [company, setCompany] = useState(''); 
 
   const [passwordError, setPasswordError] = useState(false);
   const [confirmError, setConfirmError] = useState(false);
@@ -94,7 +93,6 @@ const RegisterForm = () => {
         lastName,
         email,
         job,
-        company,
         phone
       });
 
@@ -185,13 +183,6 @@ const RegisterForm = () => {
         variant="outlined"
         value={job}
         onChange={(e) => setJob(e.target.value)}
-      />
-      <TextField
-        className={classes.textField}
-        label="Company (optional)"
-        variant="outlined"
-        value={company}
-        onChange={(e) => setCompany(e.target.value)}
       />
       <MuiTelInput
         className={classes.textField}
