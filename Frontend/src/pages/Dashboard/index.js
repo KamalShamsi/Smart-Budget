@@ -67,17 +67,19 @@ const Dashboard = () => {
       let totalExpense = getMonthTotal(currentMonthNumber, expenses);
 
       // Calculate data for expenses pie chart
-      var temp = [];
+      const indexing = ["food", "housing", "entertainment", "utilities", "transportation"];
+      var temp = [{category:"food", amount:0}, {category:"housing", amount:0}, {category:"entertainment", amount:0},
+                    {category:"utilities", amount:0}, {category:"transportation", amount:0}];
       const thisMonthExpenses = expenses.filter(
         (i) =>
         new Date(i.date_added).getMonth() + 1 === currentMonthNumber
       );
       for (let i = 0; i < thisMonthExpenses.length; i++) {
         var item = thisMonthExpenses[i]
-        temp.push({category:item.category, amount:item.amount})
+        var index = indexing.indexOf(item.category);
+        temp[index].amount = temp[index].amount + Number(item.amount);
       };
       setPieChartData(temp);
-
 
       setCashFlow(totalIncome - totalExpense);
       setIncome(totalIncome);
@@ -144,30 +146,14 @@ const Dashboard = () => {
     loadData();
   }, []);
 
-  // Sample data for demonstration
-  /*
-  const monthlyStatsData = [
-    { month: "Jan", income: 5000, expenses: 3500 },
-    { month: "Feb", income: 5500, expenses: 4000 },
-    { month: "Mar", income: 6000, expenses: 3800 },
-    { month: "Apr", income: 6500, expenses: 4200 },
-    { month: "May", income: 7000, expenses: 3900 },
-    { month: "Jun", income: 7500, expenses: 4300 },
-  ];
-  const pieChartData = [
-    { category: "Food", amount: 250 },
-    { category: "Transportation", amount: 180 },
-    { category: "Entertainment", amount: 300 },
-    { category: "Utilities", amount: 200 },
-    { category: "Shopping", amount: 150 },
-  ];
-  */
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ffc658", "#ffc658"];
+  
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#D88484", "#D884D1"];
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
 
       {
+        //dashboard
       }
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
@@ -217,7 +203,12 @@ const Dashboard = () => {
           </Button>
         </Link>
       </Box>
+
+      
       <Grid container spacing={3} justifyContent="center">
+        {
+          //balance card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -233,6 +224,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          // monthly budget card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -279,6 +274,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //cash flow card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -294,6 +293,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //cartesian graph
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -312,6 +315,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //pie chart
+        }
         <Grid item xs={8} sm={6} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -330,7 +337,7 @@ const Dashboard = () => {
                     fill="#8884d8"
                   >
                     {pieChartData.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={index} fill={COLORS[index]} />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -346,6 +353,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
       </Grid>
       <Footer/>
     </Box>
