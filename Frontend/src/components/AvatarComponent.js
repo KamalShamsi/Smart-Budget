@@ -49,9 +49,12 @@ const AvatarComponent = () => {
       </Box>
       <Dialog open={open} onClose={handleCloseDialog}>
         <DialogContent>
+          <Typography variant="h6" color="primary" align="center" gutterBottom>
+            Select Profile Picture
+          </Typography>
           <Grid container spacing={2}>
-            {avatars.map((avatarUrl) => (
-              <Grid item key={avatarUrl}>
+            {avatars.map((avatarUrl, index) => (
+              <Grid item key={index}>
                 <IconButton onClick={() => handleAvatarClick(avatarUrl)}>
                   <Avatar src={avatarUrl} sx={{ width: '80px', height: '80px' }} />
                 </IconButton>
