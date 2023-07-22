@@ -200,6 +200,7 @@ const Savings = () => {
           </Button>
         </Link>
       </Box>
+      <Box display="flex" justifyContent="center">
       <Button
         variant="contained"
         color="primary"
@@ -208,7 +209,8 @@ const Savings = () => {
       >
         Add Saving Goal
       </Button>
-      <TableContainer component={Paper} sx={{ marginBottom: 2 }}>
+      </Box>
+      <TableContainer component={Paper} sx={{ marginBottom: 2, mt: 3, width: '80%', mx: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>
