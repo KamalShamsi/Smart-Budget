@@ -146,7 +146,6 @@ const Dashboard = () => {
     loadData();
   }, []);
 
-  
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#D88484", "#D884D1"];
 
   return (
@@ -340,9 +339,9 @@ const Dashboard = () => {
                       <Cell key={index} fill={COLORS[index]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip/>
                 </PieChart>
-                <Box textAlign="left" ml={4}>
+                <Box textAlign="left" ml={8} mt={8}>
                   {pieChartData.map((entry, index) => (
                     <Typography key={index} variant="body2" color="#132c4a">
                       {entry.category}: ${entry.amount}
