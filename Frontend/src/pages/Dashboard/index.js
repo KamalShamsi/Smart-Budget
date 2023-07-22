@@ -148,6 +148,19 @@ const Dashboard = () => {
 
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#D88484", "#D884D1"];
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <Box bgcolor='white' sx={{ border: '1px solid black' }}>
+          <p className="label">{`${payload[0].name} : ${Math.round((payload[0].value / expenses) * 10000)/100}%`}</p>
+        </Box>
+      );
+    }
+  
+    return null;
+  };
+
+
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
 
@@ -339,7 +352,7 @@ const Dashboard = () => {
                       <Cell key={index} fill={COLORS[index]} />
                     ))}
                   </Pie>
-                  <Tooltip/>
+                  <Tooltip content={CustomTooltip}/>
                 </PieChart>
                 <Box textAlign="left" ml={8} mt={8}>
                   {pieChartData.map((entry, index) => (
