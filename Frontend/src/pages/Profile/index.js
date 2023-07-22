@@ -7,7 +7,8 @@ import {
   Paper,
   Button,
   Link,
-  TextField,
+  InputLabel,
+  Input,
 } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -118,65 +119,72 @@ const Profile = () => {
                 {userProfile.username}
               </Typography>
 
+              {/* First Name */}
               <Box sx={{ mb: 1 }}>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                <InputLabel htmlFor="first-name" sx={{ color: 'text.secondary' }}>
                   First Name
-                </Typography>
-                <TextField
+                </InputLabel>
+                <Input
+                  id="first-name"
                   value={userProfile.first_name}
-                  variant="outlined"
+                  readOnly
                   fullWidth
-                  InputProps={{ readOnly: true }}
                 />
               </Box>
 
+              {/* Last Name */}
               <Box sx={{ mb: 1 }}>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                <InputLabel htmlFor="last-name" sx={{ color: 'text.secondary' }}>
                   Last Name
-                </Typography>
-                <TextField
+                </InputLabel>
+                <Input
+                  id="last-name"
                   value={userProfile.last_name}
-                  variant="outlined"
+                  readOnly
                   fullWidth
-                  InputProps={{ readOnly: true }}
                 />
               </Box>
 
+              {/* Email */}
               <Box sx={{ mb: 1 }}>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                <InputLabel htmlFor="email" sx={{ color: 'text.secondary' }}>
                   Email
-                </Typography>
-                <TextField
+                </InputLabel>
+                <Input
+                  id="email"
                   value={userProfile.email}
-                  variant="outlined"
+                  readOnly
                   fullWidth
-                  InputProps={{ readOnly: true }}
                 />
               </Box>
 
+              {/* Occupation */}
               <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                <InputLabel htmlFor="occupation" sx={{ color: 'text.secondary' }}>
                   Occupation
-                </Typography>
-                <TextField
+                </InputLabel>
+                <Input
+                  id="occupation"
                   value={userProfile.job}
-                  variant="outlined"
+                  readOnly
                   fullWidth
-                  InputProps={{ readOnly: true }}
-                />
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-                  Phone Number
-                </Typography>
-                <TextField
-                  value={userProfile.phone}
-                  variant="outlined"
-                  fullWidth
-                  InputProps={{ readOnly: true }}
                 />
               </Box>
 
+              {/* Phone Number */}
+              <Box sx={{ mb: 2 }}>
+                <InputLabel htmlFor="phone" sx={{ color: 'text.secondary' }}>
+                  Phone Number
+                </InputLabel>
+                <Input
+                  id="phone"
+                  value={userProfile.phone}
+                  readOnly
+                  fullWidth
+                />
+              </Box>
+
+              {/* Logout Button */}
               <Button
                 variant="contained"
                 startIcon={<ExitToAppIcon />}
