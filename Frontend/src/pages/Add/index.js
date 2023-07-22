@@ -844,10 +844,7 @@ const AddTransaction = () => {
           </Typography>
         </Box>
       </Box>
-      <TableContainer
-        component={Paper}
-        sx={{ marginTop: "30px", maxHeight: 400, overflow: "auto" }}
-      >
+      <TableContainer component={Paper} sx={{ marginBottom: 2, mt: 3, width: '80%', mx: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>
