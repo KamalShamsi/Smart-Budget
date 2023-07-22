@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { MuiTelInput } from 'mui-tel-input' 
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -31,9 +32,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     fontSize: '14px',
     textAlign: 'center',
-  },
-  phoneInput: {
-    size: '1000px',
   }
 }));
 
@@ -43,11 +41,14 @@ const RegisterForm = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('')
   const [job, setJob] = useState('');
+  const [company, setCompany] = useState(''); 
+
   const [passwordError, setPasswordError] = useState(false);
   const [confirmError, setConfirmError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -62,7 +63,8 @@ const RegisterForm = () => {
       lastName.trim() == '' ||
       confirmPassword.trim() == '' ||
       email.trim() == '' ||
-      job.trim() == ''
+      job.trim() == '' ||
+      phone.trim() == ''
     ) {
       alert('Please fill in all fields.');
       return;
@@ -92,6 +94,8 @@ const RegisterForm = () => {
         lastName,
         email,
         job,
+        company,
+        phone
       });
 
       // Handle successful registration
@@ -111,6 +115,10 @@ const RegisterForm = () => {
   const handleCancel = () => {
     navigate('/login'); // Redirect to the login page
   };
+
+  const handleChange = (newPhone) => {
+    setPhone(newPhone)
+  }
 
   return (
     <form onSubmit={handleSubmit} className={classes.form}>
@@ -177,6 +185,20 @@ const RegisterForm = () => {
         variant="outlined"
         value={job}
         onChange={(e) => setJob(e.target.value)}
+      />
+      <TextField
+        className={classes.textField}
+        label="Company (optional)"
+        variant="outlined"
+        value={company}
+        onChange={(e) => setCompany(e.target.value)}
+      />
+      <MuiTelInput
+        className={classes.textField}
+        label="Phone Number"
+        variant="outlined"
+        value={phone}
+        onChange={handleChange}
       />
       <Button
         type="submit"

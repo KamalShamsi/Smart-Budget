@@ -135,6 +135,21 @@ const Savings = () => {
     setPayment('');
   };
 
+  const calculateDateToReachGoal = (total, payment, createdAt) => {
+    const today = new Date();
+    const createdDate = new Date(createdAt);
+    const monthsPassed = (today.getFullYear() - createdDate.getFullYear()) * 12 + today.getMonth() - createdDate.getMonth();
+    const remainingAmount = total - monthsPassed * payment;
+    const monthsToReachGoal = Math.ceil(remainingAmount / payment);
+    if (monthsToReachGoal > 0) {
+      const targetDate = new Date(createdAt);
+      targetDate.setMonth(targetDate.getMonth() + monthsPassed + monthsToReachGoal);
+      return targetDate.toLocaleDateString();
+    } else {
+      return "Goal Reached";
+    }
+  };
+
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
       <Box textAlign="center" mb={3}>
@@ -201,6 +216,7 @@ const Savings = () => {
               <TableCell>Total Amount</TableCell>
               <TableCell>Monthly Amount</TableCell>
               <TableCell>Created At</TableCell>
+              <TableCell>Date to Reach Goal</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -211,6 +227,7 @@ const Savings = () => {
                 <TableCell>${goal.total}</TableCell>
                 <TableCell>${goal.payment}</TableCell>
                 <TableCell>{new Date(goal.date_added).toLocaleDateString()}</TableCell>
+                <TableCell>{calculateDateToReachGoal(goal.total, goal.payment, goal.date_added)}</TableCell>
                 <TableCell>
                   <IconButton size="small" color="primary" onClick={() => handleEditGoal(index)}>
                     <EditIcon />
