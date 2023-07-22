@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AvatarComponent from '../../components/AvatarComponent';
 import {
   Box,
   Typography,
@@ -6,7 +7,6 @@ import {
   Paper,
   Button,
   Link,
-  Avatar,
   TextField,
 } from '@mui/material';
 import {
@@ -23,6 +23,7 @@ import Footer from '../../components/Footer';
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState('');
+  const [selectedProfilePicture, setSelectedProfilePicture] = useState('');
 
   const getUserProfile = async () => {
     try {
@@ -49,6 +50,10 @@ const Profile = () => {
   useEffect(() => {
     getUserProfile();
   }, []);
+
+  const handleSelectPicture = (picture) => {
+    setSelectedProfilePicture(picture);
+  };
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
@@ -104,9 +109,11 @@ const Profile = () => {
         <Grid item xs={12} md={6} lg={3}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box display="flex" flexDirection="column" alignItems="center">
-              <Avatar sx={{ mb: 2 }}>
-                <AccountCircleIcon fontSize="large" color="primary" />
-              </Avatar>
+              <AvatarComponent
+                currentPicture={selectedProfilePicture || 'https://news.ucsc.edu/2020/07/images/strongslugredwood4001.jpg'}
+                onSelectPicture={handleSelectPicture}
+              />
+
               <Typography variant="h6" color="primary" sx={{ mb: 3 }}>
                 {userProfile.username}
               </Typography>
