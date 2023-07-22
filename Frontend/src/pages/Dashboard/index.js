@@ -32,9 +32,11 @@ const Dashboard = () => {
   const [budget, setBudget] = useState(0);
 
   const [monthlyStatsData, setMonthlyStatsData] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
 
   let monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+  //gets data 
   const getData = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -46,6 +48,8 @@ const Dashboard = () => {
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
       var temp = [];
+
+      //get month totals
       for (let i = 1; i < 13; i++) {
         let monthIncome = getMonthTotal(i, incomes);
         let monthExpense = getMonthTotal(i, expenses);
@@ -62,6 +66,21 @@ const Dashboard = () => {
       // Calculate the total expenses
       let totalExpense = getMonthTotal(currentMonthNumber, expenses);
 
+      // Calculate data for expenses pie chart
+      const indexing = ["food", "housing", "entertainment", "utilities", "transportation"];
+      var temp = [{category:"food", amount:0}, {category:"housing", amount:0}, {category:"entertainment", amount:0},
+                    {category:"utilities", amount:0}, {category:"transportation", amount:0}];
+      const thisMonthExpenses = expenses.filter(
+        (i) =>
+        new Date(i.date_added).getMonth() + 1 === currentMonthNumber
+      );
+      for (let i = 0; i < thisMonthExpenses.length; i++) {
+        var item = thisMonthExpenses[i]
+        var index = indexing.indexOf(item.category);
+        temp[index].amount = temp[index].amount + Number(item.amount);
+      };
+      setPieChartData(temp);
+
       setCashFlow(totalIncome - totalExpense);
       setIncome(totalIncome);
       setExpenses(totalExpense);
@@ -70,6 +89,7 @@ const Dashboard = () => {
     }
   };
 
+  //gets the balance from the db
   const getBalance = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -82,6 +102,7 @@ const Dashboard = () => {
     }
   };
 
+  //gets the budget from the db
   const getBudget = async () => {
     try {
       const userId = Cookies.get("user_id");
@@ -93,15 +114,16 @@ const Dashboard = () => {
         if (res.data.length > 0) {
           setBudget(res.data[0].amount)
         }
+        
       }
-      
     } catch (error) {
       console.error("Failed to retrieve budget:", error);
     }
   };
 
+  //calls all getters async
   const loadData = async () => {
-    getCashFlow();
+    await getData();
     await getBalance();
     await getBudget();
   };
@@ -116,39 +138,22 @@ const Dashboard = () => {
     return total;
   }
 
+  //gets dates and data on page render
   useEffect(() => {
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
     setCurrentMonth(month);
-    getData();
+    loadData();
   }, []);
 
-  // Sample data for demonstration
-  /*
-  const monthlyStatsData = [
-    { month: "Jan", income: 5000, expenses: 3500 },
-    { month: "Feb", income: 5500, expenses: 4000 },
-    { month: "Mar", income: 6000, expenses: 3800 },
-    { month: "Apr", income: 6500, expenses: 4200 },
-    { month: "May", income: 7000, expenses: 3900 },
-    { month: "Jun", income: 7500, expenses: 4300 },
-  ];
-  */
-
-  const pieChartData = [
-    { category: "Food", amount: 250 },
-    { category: "Transportation", amount: 180 },
-    { category: "Entertainment", amount: 300 },
-    { category: "Utilities", amount: 200 },
-    { category: "Shopping", amount: 150 },
-  ];
-
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ffc658", "#ffc658"];
+  
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#D88484", "#D884D1"];
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
 
       {
+        //dashboard
       }
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
@@ -198,7 +203,12 @@ const Dashboard = () => {
           </Button>
         </Link>
       </Box>
+
+      
       <Grid container spacing={3} justifyContent="center">
+        {
+          //balance card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -214,6 +224,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          // monthly budget card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -260,6 +274,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //cash flow card
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -275,6 +293,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //cartesian graph
+        }
         <Grid item xs={8} sm={5} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -293,6 +315,10 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
+        {
+          //pie chart
+        }
         <Grid item xs={8} sm={6} md={5}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box textAlign="center">
@@ -311,7 +337,7 @@ const Dashboard = () => {
                     fill="#8884d8"
                   >
                     {pieChartData.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={index} fill={COLORS[index]} />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -327,6 +353,7 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
+
       </Grid>
       <Footer/>
     </Box>
