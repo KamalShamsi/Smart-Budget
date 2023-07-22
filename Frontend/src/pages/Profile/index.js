@@ -165,6 +165,17 @@ const Profile = () => {
                   InputProps={{ readOnly: true }}
                 />
               </Box>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                  Phone Number
+                </Typography>
+                <TextField
+                  value={userProfile.phone}
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+              </Box>
 
               <Button
                 variant="contained"

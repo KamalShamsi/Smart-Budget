@@ -723,6 +723,8 @@ const AddTransaction = () => {
         alignItems="center"
         mb={3}
         mt={2}
+        p={2}
+        
       >
         {!isBudgetSet ? (
           <Button
