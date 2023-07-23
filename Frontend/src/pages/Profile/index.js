@@ -111,12 +111,27 @@ const Profile = () => {
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box display="flex" flexDirection="column" alignItems="center">
               <AvatarComponent
-                currentPicture={selectedProfilePicture || 'https://news.ucsc.edu/2020/07/images/strongslugredwood4001.jpg'}
+                currentPicture={
+                  selectedProfilePicture ||
+                  'https://news.ucsc.edu/2020/07/images/strongslugredwood4001.jpg'
+                }
                 onSelectPicture={handleSelectPicture}
               />
 
-              <Typography variant="h6" color="primary" sx={{ mb: 3 }}>
-                {userProfile.username}
+              <Typography variant="h6" color="primary" sx={{ my: 3 }}>
+                {/* Special Styling for Username */}
+                <Box
+                  sx={{
+                    backgroundColor: '#1565c0',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
+                    fontSize: '1.2rem',
+                    fontWeight: 'bold',
+                    color: 'white',
+                  }}
+                >
+                  {userProfile.username}
+                </Box>
               </Typography>
 
               {/* First Name */}
