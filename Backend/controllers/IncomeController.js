@@ -21,6 +21,19 @@ exports.addIncome = async (req, res) => {
     const result = await client.query(query, values);
     const addedIncome = result.rows[0];
 
+    const existingBalanceQuery = "SELECT * FROM balance WHERE user_id = $1";
+    const balanceResult = await client.query(existingBalanceQuery, [user_id]);
+    const existingBalance =
+      balanceResult.rows.length > 0
+        ? parseFloat(balanceResult.rows[0].amount)
+        : 0;
+
+    const newBalance = existingBalance + parseFloat(amount);
+
+    const updateBalanceQuery =
+      "INSERT INTO balance (amount, user_id) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET amount = $1 RETURNING *";
+    await client.query(updateBalanceQuery, [newBalance, user_id]);
+
     res.status(201).json(addedIncome);
   } catch (error) {
     console.error("Error adding income:", error);
@@ -48,10 +61,37 @@ exports.removeIncome = async (req, res) => {
   const { user_id, id } = req.body;
 
   try {
-    const query = "DELETE FROM incomes WHERE user_id = $1 AND id = $2";
-    const values = [user_id, id];
+    // Fetch income before removing it
+    const incomeQuery = "SELECT * FROM incomes WHERE user_id = $1 AND id = $2";
+    const incomeResult = await client.query(incomeQuery, [user_id, id]);
 
-    await client.query(query, values);
+    if (incomeResult.rows.length === 0) {
+      throw new Error("Income not found");
+    }
+
+    const incomeAmount = parseFloat(incomeResult.rows[0].amount);
+
+    // Delete the income
+    const deleteQuery = "DELETE FROM incomes WHERE user_id = $1 AND id = $2";
+    await client.query(deleteQuery, [user_id, id]);
+
+    // Fetch the current balance
+    const balanceQuery = "SELECT * FROM balance WHERE user_id = $1";
+    const balanceResult = await client.query(balanceQuery, [user_id]);
+
+    if (balanceResult.rows.length === 0) {
+      throw new Error("Balance not found");
+    }
+
+    let currentBalance = parseFloat(balanceResult.rows[0].amount);
+
+    // Subtract the income amount from the current balance
+    let newBalance = currentBalance - incomeAmount;
+
+    // Update the balance in the database
+    const updateBalanceQuery =
+      "INSERT INTO balance (amount, user_id) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET amount = $1 RETURNING *";
+    await client.query(updateBalanceQuery, [newBalance, user_id]);
 
     res.status(200).json({ message: "Income removed successfully" });
   } catch (error) {

@@ -149,8 +149,8 @@ const createBalanceTable = async () => {
     await client.query(`
       CREATE TABLE IF NOT EXISTS public.balance (
         id SERIAL PRIMARY KEY,
-        amount DECIMAL(10, 2) NOT NULL,
-        user_id INT,
+        amount DECIMAL(10, 2),
+        user_id INT UNIQUE,
         FOREIGN KEY (user_id) REFERENCES public.profiles(id)
       );
     `);
@@ -179,9 +179,9 @@ app.post("/register", async (req, res) => {
     // Implement a minimum password length requirement
     const minimumPasswordLength = 6;
     if (password.length < minimumPasswordLength) {
-      return res
-        .status(400)
-        .json({ error: `Password must be at least ${minimumPasswordLength} characters long` });
+      return res.status(400).json({
+        error: `Password must be at least ${minimumPasswordLength} characters long`,
+      });
     }
 
     // Insert a new user profile into the database
@@ -272,19 +272,19 @@ client
   .connect()
   .then(() => {
     createPublicSchema().then(() => {
-      dropAllTables().then(() => {
-        createProfilesTable().then(() => {
-          createBalanceTable().then(() => {
-            createIncomesTable().then(() => {
-              createExpensesTable().then(() => {
-                createSavingTable().then(() => {
-                  createBudgetTable().then(() => {
-                    app.listen(port, () => {
-                      console.log(`Server is running on port ${port}`);
-                    });
+      // dropAllTables().then(() => {
+      createProfilesTable().then(() => {
+        createBalanceTable().then(() => {
+          createIncomesTable().then(() => {
+            createExpensesTable().then(() => {
+              createSavingTable().then(() => {
+                createBudgetTable().then(() => {
+                  app.listen(port, () => {
+                    console.log(`Server is running on port ${port}`);
                   });
                 });
               });
+              // });
             });
           });
         });

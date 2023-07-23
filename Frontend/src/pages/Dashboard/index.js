@@ -30,18 +30,35 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
   const [budget, setBudget] = useState(0);
-
   const [monthlyStatsData, setMonthlyStatsData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false); // Define the setIsLoaded function here
 
-  let monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  let monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-  const getData = async () => {
+  const getCashFlow = async () => {
     try {
       const userId = Cookies.get("user_id");
 
-      const incomeRes = await axios.get(`http://localhost:8000/incomes/${userId}`);
+      const incomeRes = await axios.get(
+        `http://localhost:8000/incomes/${userId}`
+      );
 
-      const expenseRes = await axios.get(`http://localhost:8000/expenses/${userId}`);
+      const expenseRes = await axios.get(
+        `http://localhost:8000/expenses/${userId}`
+      );
 
       let incomes = incomeRes.data;
       let expenses = expenseRes.data;
@@ -49,13 +66,17 @@ const Dashboard = () => {
       for (let i = 1; i < 13; i++) {
         let monthIncome = getMonthTotal(i, incomes);
         let monthExpense = getMonthTotal(i, expenses);
-        temp.push({month:monthNames[i-1], income:monthIncome, expenses:monthExpense});
+        temp.push({
+          month: monthNames[i - 1],
+          income: monthIncome,
+          expenses: monthExpense,
+        });
       }
       setMonthlyStatsData(temp);
 
       const currentDate = new Date();
       const currentMonthNumber = currentDate.getMonth() + 1;
-      
+
       // Calculate the total income
       let totalIncome = getMonthTotal(currentMonthNumber, incomes);
 
@@ -72,11 +93,16 @@ const Dashboard = () => {
 
   const getBalance = async () => {
     try {
-      const userId = Cookies.get("user_id");
+      const user_id = Cookies.get("user_id");
 
-      const balanceRes = await axios.get(`http://localhost:8000/balance/${userId}`);
-      let balance = balanceRes.data[0];
-      setBalance(balance ? balance.amount : 0);
+      const balanceRes = await axios.get(
+        `http://localhost:8000/balance/${user_id}`
+      );
+
+      let fetchedBalance =
+        balanceRes.data.length > 0 ? parseFloat(balanceRes.data[0].amount) : 0;
+
+      setBalance(fetchedBalance);
     } catch (error) {
       console.error("Failed to retrieve balance:", error);
     }
@@ -86,22 +112,19 @@ const Dashboard = () => {
     try {
       const userId = Cookies.get("user_id");
 
-      const res = await axios.get(
-        `http://localhost:8000/budget/${userId}`
-      );
+      const res = await axios.get(`http://localhost:8000/budget/${userId}`);
       if (res.status == 200) {
         if (res.data.length > 0) {
-          setBudget(res.data[0].amount)
+          setBudget(res.data[0].amount);
         }
       }
-      
     } catch (error) {
       console.error("Failed to retrieve budget:", error);
     }
   };
 
   const loadData = async () => {
-    getCashFlow();
+    await getCashFlow();
     await getBalance();
     await getBudget();
   };
@@ -109,18 +132,17 @@ const Dashboard = () => {
   //gets the total income/expense of the target month given in number
   const getMonthTotal = (target_month, items) => {
     const filteredItems = items.filter(
-      (i) =>
-      new Date(i.date_added).getMonth() + 1 === target_month
+      (i) => new Date(i.date_added).getMonth() + 1 === target_month
     );
     let total = filteredItems.reduce((sum, i) => sum + parseFloat(i.amount), 0);
     return total;
-  }
+  };
 
   useEffect(() => {
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
-    setCurrentMonth(month);
-    getData();
+
+    loadData();
   }, []);
 
   // Sample data for demonstration
@@ -147,52 +169,96 @@ const Dashboard = () => {
 
   return (
     <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
-
-      {
-      }
+      {}
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
           Dashboard
         </Typography>
-        <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
+        <Box
+          bgcolor="#1565c0"
+          height={2}
+          width={150}
+          mx="auto"
+          my={2}
+          borderRadius={5}
+        />
       </Box>
       <Box display="flex" justifyContent="center" mb={3}>
-        <Link component={RouterLink} to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          component={RouterLink}
+          to="/dashboard"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Button
             variant="contained"
             color="primary"
             startIcon={<HomeIcon />}
-            sx={{ marginRight: '10px', height: 60, width: 130, fontSize: '1.2rem', bgcolor: '#FFC107' }}
+            sx={{
+              marginRight: "10px",
+              height: 60,
+              width: 130,
+              fontSize: "1.2rem",
+              bgcolor: "#FFC107",
+            }}
           >
             Home
           </Button>
         </Link>
-        <Link component={RouterLink} to="/add" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          component={RouterLink}
+          to="/add"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Button
             variant="contained"
             color="primary"
             startIcon={<AddCircleIcon />}
-            sx={{ marginRight: '10px', height: 60, width: 200, fontSize: '1.2rem', bgcolor: '#03A9F4 ' }}
+            sx={{
+              marginRight: "10px",
+              height: 60,
+              width: 200,
+              fontSize: "1.2rem",
+              bgcolor: "#03A9F4 ",
+            }}
           >
             Management
           </Button>
         </Link>
-        <Link component={RouterLink} to="/savings" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          component={RouterLink}
+          to="/savings"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Button
             variant="contained"
             color="primary"
             startIcon={<MonetizationOnIcon />}
-            sx={{ marginRight: '10px', height: 60, width: 130, fontSize: '1.2rem', bgcolor: '#FF9800' }}
+            sx={{
+              marginRight: "10px",
+              height: 60,
+              width: 130,
+              fontSize: "1.2rem",
+              bgcolor: "#FF9800",
+            }}
           >
             Savings
           </Button>
         </Link>
-        <Link component={RouterLink} to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          component={RouterLink}
+          to="/profile"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Button
             variant="contained"
             color="primary"
             startIcon={<AccountCircleIcon />}
-            sx={{ fontSize: '1.2rem', height: 60, width: 130, bgcolor: '#4CAF50' }}
+            sx={{
+              fontSize: "1.2rem",
+              height: 60,
+              width: 130,
+              bgcolor: "#4CAF50",
+            }}
           >
             Profile
           </Button>
@@ -287,8 +353,18 @@ const Dashboard = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend verticalAlign="top" height={36} />
-                <Line type="monotone" dataKey="income" stroke="#8884d8" name="Income" />
-                <Line type="monotone" dataKey="expenses" stroke="#82ca9d" name="Expenses" />
+                <Line
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#8884d8"
+                  name="Income"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expenses"
+                  stroke="#82ca9d"
+                  name="Expenses"
+                />
               </LineChart>
             </Box>
           </Paper>
@@ -328,7 +404,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
-      <Footer/>
+      <Footer />
     </Box>
   );
 };

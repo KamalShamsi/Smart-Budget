@@ -50,8 +50,8 @@ const AddTransaction = () => {
   const [budget, setBudget] = useState({ amount: 0, id: null });
   const [budgetDialogOpen, setBudgetDialogOpen] = useState(false);
   const [budgetError, setBudgetError] = useState(false);
-  const [income, setIncome] = useState([]);
-  const [expense, setExpense] = useState([]);
+  const [income, setIncome] = useState();
+  const [expense, setExpense] = useState();
 
   const [isBudgetSet, setIsBudgetSet] = useState(false);
 
@@ -89,6 +89,7 @@ const AddTransaction = () => {
         const expenseRes = await axios.get(
           `http://localhost:8000/expenses/${user_id}`
         );
+
         const incomeData = incomeRes.data.map((transaction) => ({
           ...transaction,
           type: "income",
@@ -115,6 +116,12 @@ const AddTransaction = () => {
         console.error("Failed to fetch transactions:", error);
       }
     };
+
+    const fetchAllData = async (allTransactions) => {
+      getCurrentMonthTotal("income", allTransactions);
+      getCurrentMonthTotal("expense", allTransactions);
+    };
+
     if (!transactionLoaded) {
       fetchBudget();
       fetchTransactions().then((allTransactions) => {
@@ -123,12 +130,34 @@ const AddTransaction = () => {
           setExpense(0);
           return;
         }
-        getCurrentMonthTotal("income", allTransactions);
-        getCurrentMonthTotal("expense", allTransactions);
+        fetchAllData(allTransactions);
         setTransactions(allTransactions);
       });
     }
   }, [transactionLoaded]);
+
+  const setBalance = async (allTransactions) => {
+    try {
+      const user_id = Cookies.get("user_id");
+
+      const balanceRes = await axios.get(
+        `http://localhost:8000/balance/${user_id}`
+      );
+
+      let monthlyBalance = 0;
+
+      let previous_balance =
+        balanceRes.data.length > 0 ? parseFloat(balanceRes.data[0].amount) : 0;
+
+      axios.post("http://localhost:8000/add-balance", {
+        amount: parseFloat(previous_balance + monthlyBalance),
+        user_id: user_id,
+      });
+      return;
+    } catch (error) {
+      console.error("Failed to retrieve balance:", error);
+    }
+  };
 
   const handleAddIncome = async () => {
     try {
@@ -225,6 +254,7 @@ const AddTransaction = () => {
           id: id,
         });
       }
+
       setTransactionLoaded(false);
     } catch (error) {
       console.log(error);
@@ -235,7 +265,7 @@ const AddTransaction = () => {
     );
   };
 
-  const getCurrentMonthTotal = (type, trans) => {
+  const getCurrentMonthTotal = async (type, trans) => {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
