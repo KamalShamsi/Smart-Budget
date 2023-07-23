@@ -4,7 +4,7 @@ import { Typography, Box, Link } from "@mui/material";
 const Footer = () => {
   return (
     <Box
-      bgcolor="#0d47a1"
+      //#region bgcolor="#0d47a1"
       color="white"
       textAlign="center"
       py={2}

@@ -22,6 +22,7 @@ import {
 import Cookies from "js-cookie";
 import { Link as RouterLink } from "react-router-dom";
 import Footer from "../../components/Footer";
+import backgroundImg from '../../images/background.jpg';
 
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
@@ -162,16 +163,18 @@ const Dashboard = () => {
 
 
   return (
-    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
-
-      {
-        //dashboard
-      }
+    <Box sx={{
+      backgroundImage: `url(${backgroundImg})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+      p: 3,
+    }}>
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
           Dashboard
         </Typography>
-        <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
+        <Box  height={2} width={150} mx="auto" my={2} borderRadius={5} />
       </Box>
       <Box display="flex" justifyContent="center" mb={3}>
         <Link component={RouterLink} to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -365,7 +368,6 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-
       </Grid>
       <Footer/>
     </Box>

@@ -36,6 +36,7 @@ import Cookies from "js-cookie";
 import { Link as RouterLink } from "react-router-dom";
 import Footer from "../../components/Footer";
 import { Input } from "@mui/material";
+import backgroundImg from '../../images/background.jpg';
 
 const AddTransaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -322,7 +323,14 @@ const AddTransaction = () => {
   };
 
   return (
-    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
+    <Box        sx={{
+      backgroundImage: `url(${backgroundImg})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+      p: 3,
+    }}>
+    <Box minHeight="100vh" p={3}>
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
           Management
@@ -845,7 +853,7 @@ const AddTransaction = () => {
         </Box>
       </Box>
       <Box sx={{ width: '80%', overflow: 'hidden', overflowY: 'auto', maxHeight: '60vh', mx: 'auto',bgcolor: '#ffffff',}}>
-      <TableContainer>
+      <TableContainer sx={{ maxHeight: '40vh', overflow: 'auto' }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -906,6 +914,7 @@ const AddTransaction = () => {
       </TableContainer>
       </Box>
       <Footer />
+    </Box>
     </Box>
   );
 };

@@ -21,6 +21,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
 import Footer from '../../components/Footer';
+import backgroundImg from '../../images/background.jpg';
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState('');
@@ -57,7 +58,14 @@ const Profile = () => {
   };
 
   return (
-    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
+    <Box       sx={{
+      backgroundImage: `url(${backgroundImg})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+      p: 3,
+    }}>
+    <Box  minHeight="100vh" p={3}>
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
           Profile
@@ -213,6 +221,7 @@ const Profile = () => {
         </Grid>
       </Grid>
       <Footer />
+    </Box>
     </Box>
   );
 };

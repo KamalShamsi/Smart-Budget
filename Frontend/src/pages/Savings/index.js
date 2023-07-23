@@ -29,6 +29,7 @@ import {
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Footer from "../../components/Footer";
+import backgroundImg from '../../images/background.jpg';
 
 const Savings = () => {
   const [savingGoals, setSavingGoals] = useState([]);
@@ -151,12 +152,12 @@ const Savings = () => {
   };
 
   return (
-    <Box bgcolor="#0d47a1" minHeight="100vh" p={3}>
+    <Box sx={{ minHeight: '100vh', p: 3, backgroundImage: `url(${backgroundImg})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" color="white">
           Savings
         </Typography>
-        <Box bgcolor="#1565c0" height={2} width={150} mx="auto" my={2} borderRadius={5} />
+        <Box height={2} width={150} mx="auto" my={2} borderRadius={5} />
       </Box>
       <Box display="flex" justifyContent="center" mb={3}>
         <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
