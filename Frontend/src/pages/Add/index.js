@@ -136,29 +136,6 @@ const AddTransaction = () => {
     }
   }, [transactionLoaded]);
 
-  const setBalance = async (allTransactions) => {
-    try {
-      const user_id = Cookies.get("user_id");
-
-      const balanceRes = await axios.get(
-        `http://localhost:8000/balance/${user_id}`
-      );
-
-      let monthlyBalance = 0;
-
-      let previous_balance =
-        balanceRes.data.length > 0 ? parseFloat(balanceRes.data[0].amount) : 0;
-
-      axios.post("http://localhost:8000/add-balance", {
-        amount: parseFloat(previous_balance + monthlyBalance),
-        user_id: user_id,
-      });
-      return;
-    } catch (error) {
-      console.error("Failed to retrieve balance:", error);
-    }
-  };
-
   const handleAddIncome = async () => {
     try {
       let user_id = Cookies.get("user_id");
@@ -254,7 +231,6 @@ const AddTransaction = () => {
           id: id,
         });
       }
-
       setTransactionLoaded(false);
     } catch (error) {
       console.log(error);

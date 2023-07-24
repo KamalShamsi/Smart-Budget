@@ -272,19 +272,19 @@ client
   .connect()
   .then(() => {
     createPublicSchema().then(() => {
-      // dropAllTables().then(() => {
-      createProfilesTable().then(() => {
-        createBalanceTable().then(() => {
-          createIncomesTable().then(() => {
-            createExpensesTable().then(() => {
-              createSavingTable().then(() => {
-                createBudgetTable().then(() => {
-                  app.listen(port, () => {
-                    console.log(`Server is running on port ${port}`);
+      dropAllTables().then(() => {
+        createProfilesTable().then(() => {
+          createBalanceTable().then(() => {
+            createIncomesTable().then(() => {
+              createExpensesTable().then(() => {
+                createSavingTable().then(() => {
+                  createBudgetTable().then(() => {
+                    app.listen(port, () => {
+                      console.log(`Server is running on port ${port}`);
+                    });
                   });
                 });
               });
-              // });
             });
           });
         });

@@ -30,8 +30,8 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState(0);
   const [currentMonth, setCurrentMonth] = useState("");
   const [budget, setBudget] = useState(0);
+
   const [monthlyStatsData, setMonthlyStatsData] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false); // Define the setIsLoaded function here
 
   let monthNames = [
     "Jan",
@@ -48,7 +48,7 @@ const Dashboard = () => {
     "Dec",
   ];
 
-  const getCashFlow = async () => {
+  const getData = async () => {
     try {
       const userId = Cookies.get("user_id");
 
@@ -93,16 +93,13 @@ const Dashboard = () => {
 
   const getBalance = async () => {
     try {
-      const user_id = Cookies.get("user_id");
+      const userId = Cookies.get("user_id");
 
       const balanceRes = await axios.get(
-        `http://localhost:8000/balance/${user_id}`
+        `http://localhost:8000/balance/${userId}`
       );
-
-      let fetchedBalance =
-        balanceRes.data.length > 0 ? parseFloat(balanceRes.data[0].amount) : 0;
-
-      setBalance(fetchedBalance);
+      let balance = balanceRes.data[0];
+      setBalance(balance ? balance.amount : 0);
     } catch (error) {
       console.error("Failed to retrieve balance:", error);
     }
@@ -124,7 +121,6 @@ const Dashboard = () => {
   };
 
   const loadData = async () => {
-    await getCashFlow();
     await getBalance();
     await getBudget();
   };
@@ -141,7 +137,7 @@ const Dashboard = () => {
   useEffect(() => {
     const today = new Date();
     const month = today.toLocaleString("default", { month: "long" });
-
+    setCurrentMonth(month);
     loadData();
   }, []);
 

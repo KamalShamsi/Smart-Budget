@@ -90,7 +90,7 @@ exports.removeIncome = async (req, res) => {
 
     // Update the balance in the database
     const updateBalanceQuery =
-      "INSERT INTO balance (amount, user_id) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET amount = $1 RETURNING *";
+      "UPDATE balance SET amount = $1 WHERE user_id = $2 RETURNING *";
     await client.query(updateBalanceQuery, [newBalance, user_id]);
 
     res.status(200).json({ message: "Income removed successfully" });
