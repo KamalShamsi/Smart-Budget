@@ -152,7 +152,7 @@ const createBalanceTable = async () => {
       CREATE TABLE IF NOT EXISTS public.balance (
         id SERIAL PRIMARY KEY,
         amount DECIMAL(10, 2) NOT NULL,
-        user_id INT,
+        user_id INT UNIQUE,
         FOREIGN KEY (user_id) REFERENCES public.profiles(id)
       );
     `);
@@ -164,7 +164,8 @@ const createBalanceTable = async () => {
 
 // Register endpoint
 app.post("/register", async (req, res) => {
-  const { username, password, firstName, lastName, email, job, phone} = req.body;
+  const { username, password, firstName, lastName, email, job, phone } =
+    req.body;
 
   try {
     // Check if the username is already taken
@@ -181,9 +182,9 @@ app.post("/register", async (req, res) => {
     // Implement a minimum password length requirement
     const minimumPasswordLength = 6;
     if (password.length < minimumPasswordLength) {
-      return res
-        .status(400)
-        .json({ error: `Password must be at least ${minimumPasswordLength} characters long` });
+      return res.status(400).json({
+        error: `Password must be at least ${minimumPasswordLength} characters long`,
+      });
     }
 
     // Insert a new user profile into the database
