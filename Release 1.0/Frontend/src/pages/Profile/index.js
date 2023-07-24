@@ -206,7 +206,7 @@ const Profile = () => {
                 />
               </Box>
 
-              {/* Logout Button */}
+              {/* Logout Button **/}
               <Button
                 variant="contained"
                 startIcon={<ExitToAppIcon />}
