@@ -912,8 +912,18 @@ const AddTransaction = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box >
+                <Box
+        sx={{
+          position: 'fixed',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Footer />
       </Box>
-          <Footer />
     </Box>
     </Box>
   );

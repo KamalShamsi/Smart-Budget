@@ -15,6 +15,7 @@ const Login = () => {
       position: 'relative', // Added positioning context
     }}>
       <LoginForm />
+      
       <Footer/>
     </Box>
   );

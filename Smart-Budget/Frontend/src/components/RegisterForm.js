@@ -18,12 +18,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: 'no-repeat',
   },
   formContainer: {
-    backgroundColor: 'white', // White background color for the box
-    padding: theme.spacing(4),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: theme.spacing(2),
     borderRadius: theme.spacing(2),
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    width: '300px', // You can adjust the width as per your requirement
-    height: '650px'
+    width: '300px',
+    height: '700px',
   },
   form: {
     display: 'flex',
@@ -36,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%', // Make the text fields take up the full width of the box
   },
   button: {
-    marginTop: theme.spacing(2),
+    
     width: '100%', // Make the buttons take up the full width of the box
   },
   heading: {
