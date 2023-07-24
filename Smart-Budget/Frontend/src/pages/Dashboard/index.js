@@ -369,7 +369,9 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
-      <Footer/>
+      <Box position="fixed" bottom={0} left={0} right={0} p={2}>
+          <Footer />
+        </Box>
     </Box>
   );
 };

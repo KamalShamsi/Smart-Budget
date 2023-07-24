@@ -219,17 +219,9 @@ const Profile = () => {
           </Paper>
         </Grid>
       </Grid>
-      <Box
-        sx={{
-          position: 'fixed',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Footer />
-      </Box>
+      <Box bottom={0} left={0} right={0} p={1}>
+          <Footer />
+        </Box>
     </Box>
     </Box>
   );
