@@ -12,7 +12,7 @@ const RegisterPage = () => {
       backgroundRepeat: 'no-repeat',
       minHeight: '100vh',
       p: 3,
-      position: 'relative', // Added positioning context
+      position: 'relative',
     }}>
       <RegisterForm />
       <Box

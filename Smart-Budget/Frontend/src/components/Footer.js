@@ -9,7 +9,6 @@ const Footer = () => {
       textAlign="center"
       py={2}
       mt={3}
-      position="fixed"
       bottom={0}
       left={0}
       width="100%"

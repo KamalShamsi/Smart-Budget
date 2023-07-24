@@ -852,7 +852,7 @@ const AddTransaction = () => {
           </Typography>
         </Box>
       </Box>
-      <Box sx={{ width: '80%', overflow: 'hidden', overflowY: 'auto', maxHeight: '60vh', mx: 'auto',bgcolor: '#ffffff',}}>
+      <Box sx={{ width: '80%', overflow: 'hidden', overflowY: 'auto', maxHeight: '60vh', mx: 'auto',bgcolor: '#E1F5FE',}}>
       <TableContainer sx={{ maxHeight: '40vh', overflow: 'auto' }}>
         <Table>
           <TableHead>
@@ -913,7 +913,7 @@ const AddTransaction = () => {
         </Table>
       </TableContainer>
       </Box>
-      <Footer />
+          <Footer />
     </Box>
     </Box>
   );

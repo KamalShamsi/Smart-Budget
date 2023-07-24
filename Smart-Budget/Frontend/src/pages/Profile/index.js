@@ -115,9 +115,9 @@ const Profile = () => {
         </Link>
       </Box>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} md={6} lg={3}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Box display="flex" flexDirection="column" alignItems="center">
+        <Grid item xs={12} md={6} lg={3} >
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
+            <Box display="flex" flexDirection="column" alignItems="center" >
               <AvatarComponent
                 currentPicture={
                   selectedProfilePicture ||
@@ -127,7 +127,6 @@ const Profile = () => {
               />
 
               <Typography variant="h6" color="primary" sx={{ my: 3 }}>
-                {/* Special Styling for Username */}
                 <Box
                   sx={{
                     backgroundColor: '#1565c0',

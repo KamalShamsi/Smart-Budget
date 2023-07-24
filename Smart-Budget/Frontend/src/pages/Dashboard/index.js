@@ -220,12 +220,12 @@ const Dashboard = () => {
       </Box>
 
       
-      <Grid container spacing={3} justifyContent="center">
+      <Grid container spacing={3} justifyContent="center" >
         {
           //balance card
         }
-        <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+        <Grid item xs={8} sm={5} md={5} >
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
                 Balance
@@ -244,7 +244,7 @@ const Dashboard = () => {
           // monthly budget card
         }
         <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
                 Monthly Budget
@@ -263,7 +263,7 @@ const Dashboard = () => {
           //monthly income & expenses
         }
         <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
                 Monthly Income & Expenses
@@ -294,7 +294,7 @@ const Dashboard = () => {
           //cash flow card
         }
         <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
                 Cash Flow
@@ -313,7 +313,7 @@ const Dashboard = () => {
           //cartesian graph
         }
         <Grid item xs={8} sm={5} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
                 Monthly Income & Expenses
@@ -324,8 +324,8 @@ const Dashboard = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend verticalAlign="top" height={36} />
-                <Line type="monotone" dataKey="income" stroke="#8884d8" name="Income" />
-                <Line type="monotone" dataKey="expenses" stroke="#82ca9d" name="Expenses" />
+                <Line type="monotone" dataKey="income" stroke="#00FF00" name="Income" />
+                <Line type="monotone" dataKey="expenses" stroke="#FF0000" name="Expenses" />
               </LineChart>
             </Box>
           </Paper>
@@ -335,7 +335,7 @@ const Dashboard = () => {
           //pie chart
         }
         <Grid item xs={8} sm={6} md={5}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+          <Paper elevation={3} sx={{ p: 2 }} sx={{ backgroundColor: '#E1F5FE' }}>
             <Box textAlign="center">
               <Typography variant="h6" color="#132c4a">
                 Expense Categories Breakdown

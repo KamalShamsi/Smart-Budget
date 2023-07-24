@@ -211,7 +211,7 @@ const Savings = () => {
         Add Saving Goal
       </Button>
       </Box>
-      <TableContainer component={Paper} sx={{ marginBottom: 2, mt: 3, width: '80%', mx: 'auto' }}>
+      <TableContainer component={Paper} sx={{ marginBottom: 2, mt: 3, width: '80%', mx: 'auto', bgcolor: '#E1F5FE', }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -282,7 +282,9 @@ const Savings = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Footer/>
+      <Box position="fixed" bottom={0} left={0} right={0} p={2}>
+          <Footer />
+        </Box>
     </Box>
   );
 };
