@@ -11,12 +11,14 @@ import { useNavigate } from "react-router-dom";
 export default function ProfileCards() {
   const navigate = useNavigate();
 
+  // Function to handle logout and redirect to the login page
   const handleLogout = () => {
     navigate("/login"); // Redirect to the login page after logout
   };
 
   return (
     <div>
+      {/* Card for displaying profile information */}
       <Card color="#064495">
         <div
           style={{
@@ -26,9 +28,11 @@ export default function ProfileCards() {
             alignItems: "center",
           }}
         >
+          {/* Icon for the profile */}
           <AccountCircleIcon fontSize="large" />
 
           <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Username */}
             <span
               style={{
                 color: "white",
@@ -39,18 +43,20 @@ export default function ProfileCards() {
             >
               Username
             </span>
-            <span
-              style={{ fontWeight: "600", color: "white", fontSize: "25px" }}
-            >
+            {/* User's name */}
+            <span style={{ fontWeight: "600", color: "white", fontSize: "25px" }}>
               John Doe
             </span>
           </div>
         </div>
       </Card>
 
+      {/* Profile buttons */}
+      {/* Each ProfileButton component displays an icon and content */}
       <ProfileButton Icon={AccountBalanceWalletSharpIcon} content="Account" />
       <ProfileButton Icon={SettingsSharpIcon} content="Settings" />
       <ProfileButton Icon={IosShareSharpIcon} content="Export Data" />
+      {/* Logout button with onClick event */}
       <ProfileButton
         Icon={LogoutSharpIcon}
         content="Logout"
