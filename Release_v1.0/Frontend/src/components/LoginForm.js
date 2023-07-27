@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+// Custom styles for the LoginForm component
 const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// LoginForm component
 const LoginForm = () => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -63,7 +65,7 @@ const LoginForm = () => {
 
         // Store the user ID and token in the browser cookies
         Cookies.set("user_id", userId);
-        Cookies.set ("tok", token)
+        Cookies.set("tok", token);
         navigate("/dashboard"); // Redirect to the dashboard page
       } else {
         console.log("Login failed:", response.data.message);
@@ -78,10 +80,13 @@ const LoginForm = () => {
   return (
     <div className={classes.container}>
       <div className={classes.formContainer}>
+        {/* Title */}
         <Typography variant="h5" className={classes.title}>
           Smart Budget
         </Typography>
+        {/* Login form */}
         <form onSubmit={handleSubmit}>
+          {/* Username field */}
           <TextField
             className={classes.textField}
             label="Username"
@@ -90,6 +95,7 @@ const LoginForm = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
+          {/* Password field */}
           <TextField
             className={classes.textField}
             label="Password"
@@ -99,6 +105,7 @@ const LoginForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {/* Submit button */}
           <Button
             type="submit"
             variant="contained"
@@ -109,6 +116,7 @@ const LoginForm = () => {
             Login
           </Button>
         </form>
+        {/* Sign-up link */}
         <Typography
           variant="body1"
           align="center"
