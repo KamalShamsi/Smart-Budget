@@ -8,12 +8,12 @@ Not Deployed
 
 ## Installation
 1. Install npm
-2. Install postgresql
+2. Install Postgresql
 3. Install node.js
-4. download the repo
-5. enter the frontend folder and call npm install
-6. enter the backend folder and call npm install
+4. Download this repo
+5. Enter the frontend folder and call npm install
+6. Enter the backend folder and call npm install
 
 ## Execution
-1. go to backend/ and run npm start
-2. go to frontend/ in another terminal and run npm start
+1. Go to Backend/ and run npm start
+2. Go to Frontend/ in another terminal and run npm start
