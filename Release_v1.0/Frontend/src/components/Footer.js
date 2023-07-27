@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography, Box, Link } from "@mui/material";
 
+// Footer component that displays footer information for the application.
 const Footer = () => {
   return (
     <Box
@@ -13,12 +14,15 @@ const Footer = () => {
       left={0}
       width="100%"
     > 
+      {/* Render the copyright text with the current year */}
       <Typography variant="body2">
         &copy; {new Date().getFullYear()} All rights reserved.
       </Typography>
+      {/* Render the project information */}
       <Typography variant="body2">
         Smart Budget - CSE 115A Project by Team FTX
       </Typography>
+      {/* Render links to UC Santa Cruz and Baskin School of Engineering */}
       <Link
         href="https://www.ucsc.edu/"
         target="_blank"
@@ -37,6 +41,7 @@ const Footer = () => {
         Baskin School of Engineering
       </Link>
 
+      {/* Render contact information for the team */}
       <Typography variant="body2">
         Contact us at: 
         kshamsi@ucsc.edu |
@@ -45,8 +50,6 @@ const Footer = () => {
         dakle@ucsc.edu |
         ariaz1@ucsc.edu 
       </Typography>
-
-
     </Box>
   );
 };
